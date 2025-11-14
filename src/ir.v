@@ -1,0 +1,32 @@
+/* 
+ * IR - Instruction Register
+ * Part of the JRAG TAP
+ * 
+ * Julia Desmazes, 2025, human made code
+ */
+module ir #(
+	parameter W // IR length
+    )(
+	input  tck_i, 
+	input  tdi_i,
+	output tdo_o,
+	
+	input  capture_i,
+	input  shift_i,
+	input  update_i,
+
+	output [W-1:0] inst_o	
+	);
+reg [W-1:0] shift_q;//shift register
+reg [W-1:0] hold_q; //hold register
+
+always @(posedge tck_i)
+	if (capture_i)    shift_q <= hold_q;
+	else if (shift_i) shift_q <= {tdi_i, shift_q[W-1:1]};
+
+always @(posedge tck_i)
+	if(update_i) hold_q <= shift_q;
+
+assign inst_o = hold_q;
+assign tdo_o = shift_q[0];
+endmodule

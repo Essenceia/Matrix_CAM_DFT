@@ -4,14 +4,28 @@
  * Julia Desmazes, 25, human made code
  */
 
-module tap_contoller(
+module tap_contolle #(
+	parameter IR_W,
+	parameter [3:0]  VERSION_NUM,
+	parameter [15:0] PART_NUM,
+	parameter [10:0] MANIFACTURE_ID
+	)(
 	input  ena_i, 
 
 	input  tck_i, 
 	input  tms_i, 
-	input  tdi_i, 
-	output tdo_i
+	input  tdi_i,
+	input  trst_i, // optional, adding to guaranty FSM is in reset to help reduce power 
+	output tdo_o,
+
+	output dr_shift_o,
+	output dr_capture_o,
+	output dr_update_o
 );
+localparam [IR_W-1:0] IDCODE = ?;
+localparam [IR_W-1:0] BYPASS = ?;
+
+localparam [31:0] PART_ID = {VERSION_NUM, PART_NUM, MANIFACTURE_ID, 1'b1};
 /* TAP FSM */ 
 localparam RESET      = 0;
 localparam IDLE       = 1;
@@ -33,8 +47,10 @@ localparam IR_UPDATE  = 15;
 reg [3:0] fsm_q;
 
 /* fsm is reset though the RESET TAP */
-always @(posedge tck_i) begin
-	if (ena_i) begin // block isn't going to be power gatted
+always @(posedge tck_i or posedge trst_i) begin
+	if (trst_i) 
+		fsm_q <= RESET;
+	end else if (ena_i) begin // block isn't going to be power gatted
 		case(fsq_q) begin
 			RESET:      fsm_q <= tms_i? RESET: IDLE;
 			IDLE:       fsm_q <= tms_i? DR_SELECT: IDLE;
@@ -53,7 +69,34 @@ always @(posedge tck_i) begin
 			IR_EXIT_2:  fsm_q <= tms_i? IR_UPDATE: IR_SHIFT;
 			IR_UPDATE:  fsm_q <= tms_i? DR_SELECT: IDLE;
 		endcase	
-	end	
+	end
 end
 
+
+/* IR register */
+wire [IR_W-1] ir; 
+wire ir_tdo;
+ir #(.W(IR_W)) m_ir(
+	.tck_i(tck_i),
+	.tdi_i(tdi_i),
+	.tdo_o(ir_tdo),
+
+	.captrue_i(fsm_q == IR_CAPTURE),
+	.shift_i(fsm_q == IR_SELECT),
+	.update_i(fsm_q == IR_UPDATE),
+
+	.hold_o(ir)
+);
+/* DR */ 
+wire dr_tdo;
+
+assign dr_shift_o   = fsm_q == DR_SHIFT;
+assign dr_capture_o = fsm_q == DR_CAPTURE; 
+assign dr_update_o  = fsm_q == DR_UPDATE; 
+
+/* TDO mux */
+assign tdo_o = (fsm_q == IR_SHIFT)? ir_tdo: 
+			   (fsm_q == DR_SHIFT)? dr_tdo:
+			   1'b0;
+		
 endmodule
