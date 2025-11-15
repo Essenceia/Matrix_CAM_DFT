@@ -22,9 +22,19 @@ module tap_contolle #(
 	output dr_capture_o,
 	output dr_update_o
 );
-localparam [IR_W-1:0] IDCODE = ?;
-localparam [IR_W-1:0] BYPASS = ?;
+`define EXTEST          4'b0000
+`define SAMPLE_PRELOAD  4'b0001
+`define IDCODE          4'b0010
+`define DEBUG           4'b1000
+`define MBIST           4'b1001
+`define BYPASS          4'b1111
+/* supported instructions */
+localparam [IR_W-1:0] SAMPLE_PRELOAD = {IR_W-1{1'b0}}; // 0
+localparam [IR_W-1:0] IDCODE = {{IR_W-2{1'b0}}, 1'b1}; // 1
+localparam [IR_W-1:0] EXTEST = {{IR_W-2{1'b0}}, 2'b10};// 2
+localparam [IR_W-1:0] BYPASS = {IR_W-1{1'b1}};         // max
 
+/* part identifier, returned on IDCODE */
 localparam [31:0] PART_ID = {VERSION_NUM, PART_NUM, MANIFACTURE_ID, 1'b1};
 /* TAP FSM */ 
 localparam RESET      = 0;
