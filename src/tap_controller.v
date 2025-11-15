@@ -4,6 +4,8 @@
  * Julia Desmazes, 25, human made code
  */
 
+`timescale 1ns / 1ps
+
 module tap_contolle #(
 	parameter IR_W,
 	parameter [3:0]  VERSION_NUM,
@@ -56,10 +58,10 @@ reg [3:0] fsm_q;
 
 /* fsm is reset though the RESET TAP */
 always @(posedge tck_i or posedge trst_i) begin
-	if (trst_i) 
+	if (trst_i) begin 
 		fsm_q <= RESET;
 	end else if (ena_i) begin // block isn't going to be power gatted
-		case(fsq_q) begin
+		case(fsq_q)
 			RESET:      fsm_q <= tms_i? RESET: IDLE;
 			IDLE:       fsm_q <= tms_i? DR_SELECT: IDLE;
 			DR_SELECT:  fsm_q <= tms_i? IR_SELECT: DR_CAPTURE; 
@@ -82,18 +84,20 @@ end
 
 
 /* IR register */
-wire [IR_W-1] ir; 
+wire [IR_W-1:0] ir; 
 wire ir_tdo;
-ir #(.W(IR_W)) m_ir(
+ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
+	.rst_tap(trst_i),
+
 	.tck_i(tck_i),
 	.tdi_i(tdi_i),
 	.tdo_o(ir_tdo),
 
-	.captrue_i(fsm_q == IR_CAPTURE),
+	.capture_i(fsm_q == IR_CAPTURE),
 	.shift_i(fsm_q == IR_SELECT),
 	.update_i(fsm_q == IR_UPDATE),
 
-	.hold_o(ir)
+	.inst_o(ir)
 );
 /* DR */ 
 wire dr_tdo;

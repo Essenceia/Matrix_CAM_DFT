@@ -4,9 +4,12 @@
  * 
  * Julia Desmazes, 2025, human made code
  */
+
+`timescale 1ns / 1ps
+
 module ir #(
-	parameter W // IR length
-	parameter [W-1:] RESET_OPCODE
+	parameter          W,// IR length
+	parameter [W-1:0] RESET_OPCODE // can be IDCODE of BYPASS according to spec
     )(
 	input  rst_tap,
 
@@ -19,7 +22,7 @@ module ir #(
 	input  update_i,
 
 	output [W-1:0] inst_o	
-	);
+);
 reg [W-1:0] shift_q;//shift register
 reg [W-1:0] hold_q; //hold register
 

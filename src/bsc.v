@@ -8,6 +8,9 @@
  *
  * Julia Desmazes, 25, this code is humman made
  */
+
+`timescale 1ns / 1ps
+
 module bsc #(
 	parameter W
 	)(
@@ -64,7 +67,7 @@ module bsc_inner(
 	input  capture_i, // Capture DR
 	input  update_i,  // Update DR
 	input  mode_i
-)
+);
 wire ff_1_next, ff_2_next;
 reg  ff_1_q, ff_2_q;
 
