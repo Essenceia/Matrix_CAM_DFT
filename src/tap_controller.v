@@ -10,7 +10,10 @@ module tap_contolle #(
 	parameter IR_W,
 	parameter [3:0]  VERSION_NUM,
 	parameter [15:0] PART_NUM,
-	parameter [10:0] MANIFACTURE_ID
+	parameter [10:0] MANIFACTURE_ID,
+	parameter UREG_ADDR_W, // user register address size
+	parameter UREG_DATA_W, // user register size
+	parameter UREG_W = $max(UREG_ADDR_W, UREG_DATA_W)
 	)(
 	input  ena_i, 
 
@@ -20,19 +23,26 @@ module tap_contolle #(
 	input  trst_i, // optional, adding to guaranty FSM is in reset to help reduce power 
 	output tdo_o,
 
-	output dr_shift_o,
-	output dr_capture_o,
-	output dr_update_o
+	output dsc_shift_o,
+	output dsc_capture_o,
+	output dsc_update_o,
+	output dsc_mode_o,
+
+	input dsc_tdo_i,
+
+	output [UREG_W-1:0] ureg_addr_o,
+	input  [UREG_W-1:0] ureg_data_i	
 );
 /* supported instruction opcodes
  * some instructions opcodes can be implementation defined, this isn't
  * the case for the following two instructions : 
  * EXTEST - 0
  * BYPASS - max (all ones)  */
-localparam [IR_W-1:0] EXTEST = {IR_W-1{1'b0}};// 0 - spec defined
-localparam [IR_W-1:0] IDCODE = {{IR_W-2{1'b0}}, 1'b1}; // 1
-localparam [IR_W-1:0] SAMPLE_PRELOAD = {IR_W-1{1'b0}}; // 0
-localparam [IR_W-1:0] BYPASS = {IR_W-1{1'b1}};         // max
+localparam [IR_W-1:0] EXTEST         = {IR_W-1{1'b0}};// 0 - spec defined
+localparam [IR_W-1:0] IDCODE         = {{IR_W-2{1'b0}}, 1'b1}; // 1
+localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-3{1'b0}}, 2'b1}; // 2
+localparam [IR_W-1:0] USER_REG       = {{IR_W-3{1'b0}}, 2'b1}; // 3
+localparam [IR_W-1:0] BYPASS         = {IR_W-1{1'b1}};         // max
 
 /* part identifier, returned on IDCODE */
 localparam [31:0] PART_ID = {VERSION_NUM, PART_NUM, MANIFACTURE_ID, 1'b1};
@@ -99,16 +109,50 @@ ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
 
 	.inst_o(ir)
 );
+
+/* IDCODE */
+reg [31:0] idcode_q;
+always @(posedge tck_i) begin
+	if (fsm_q == DR_CAPTURE)    idcode_q <= PART_ID;
+	else if (fsm_q == DR_SHIFT) idcode_q <= {1'b0, idcode_q[31:1]};
+end
+
+/* BYPASS */
+reg bypass_q;
+always @(posedge tck_i) begin
+	if (fsm_q == DR_CAPTURE) bypass_q; 
+	else if (fsm_q == DR_SHIFT) bypass_q <= tdi_i;	
+end
+
+/* USER REGISTER */
+localparam UREG_W
+reg [UREG_W-1:0] ureg_addr_q, ureg_data_q, ureg_tdi_q;
+always @(posedge tck_i) begin
+	if (fsm_q == DR_CAPTURE) begin
+		ureg_addr_q <= ureg_tdi_q;
+		ureg_data_q <= ureg_data_i;
+	end else if (fsm_q == DR_SHIFT) begin
+		ureg_tdi_q <= {tdi_i, ureg_tdi_q[UREG_W-2:0]};
+		ureg_data_q <= {1'b0, ureg_data_q[UREG_W-1:1]};
+	end
+end
+
 /* DR */ 
 wire dr_tdo;
 
-assign dr_shift_o   = fsm_q == DR_SHIFT;
-assign dr_capture_o = fsm_q == DR_CAPTURE; 
-assign dr_update_o  = fsm_q == DR_UPDATE; 
+assign dsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
+assign dsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
+assign dsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
+assign dsc_mode_o    = fsm_q == DR_UPDATE  & ir == EXTEST;
 
 /* TDO mux */
+assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
+				(ir == BYPASS) ? bypass_q : 
+				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo:
+				(ir == USER_REG)? ureg_data_q[0]: 
+				1'b0; // TODO custom reg
+
 assign tdo_o = (fsm_q == IR_SHIFT)? ir_tdo: 
-			   (fsm_q == DR_SHIFT)? dr_tdo:
-			   1'b0;
+			   dr_tdo;
 		
 endmodule
