@@ -22,16 +22,14 @@ module tap_contolle #(
 	output dr_capture_o,
 	output dr_update_o
 );
-`define EXTEST          4'b0000
-`define SAMPLE_PRELOAD  4'b0001
-`define IDCODE          4'b0010
-`define DEBUG           4'b1000
-`define MBIST           4'b1001
-`define BYPASS          4'b1111
-/* supported instructions */
-localparam [IR_W-1:0] SAMPLE_PRELOAD = {IR_W-1{1'b0}}; // 0
+/* supported instruction opcodes
+ * some instructions opcodes can be implementation defined, this isn't
+ * the case for the following two instructions : 
+ * EXTEST - 0
+ * BYPASS - max (all ones)  */
+localparam [IR_W-1:0] EXTEST = {IR_W-1{1'b0}};// 0 - spec defined
 localparam [IR_W-1:0] IDCODE = {{IR_W-2{1'b0}}, 1'b1}; // 1
-localparam [IR_W-1:0] EXTEST = {{IR_W-2{1'b0}}, 2'b10};// 2
+localparam [IR_W-1:0] SAMPLE_PRELOAD = {IR_W-1{1'b0}}; // 0
 localparam [IR_W-1:0] BYPASS = {IR_W-1{1'b1}};         // max
 
 /* part identifier, returned on IDCODE */

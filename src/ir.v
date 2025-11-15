@@ -6,7 +6,10 @@
  */
 module ir #(
 	parameter W // IR length
+	parameter [W-1:] RESET_OPCODE
     )(
+	input  rst_tap,
+
 	input  tck_i, 
 	input  tdi_i,
 	output tdo_o,
@@ -25,7 +28,8 @@ always @(posedge tck_i)
 	else if (shift_i) shift_q <= {tdi_i, shift_q[W-1:1]};
 
 always @(posedge tck_i)
-	if(update_i) hold_q <= shift_q;
+	if (rst_tap) hold_q <= RESET_OPCODE; 
+	else if(update_i) hold_q <= shift_q;
 
 assign inst_o = hold_q;
 assign tdo_o = shift_q[0];

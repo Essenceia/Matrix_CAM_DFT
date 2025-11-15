@@ -9,7 +9,7 @@
  * Julia Desmazes, 25, this code is humman made
  */
 module bsc #(
-	parameter W=1
+	parameter W
 	)(
 	input  [W-1:0] data_i,
 	output [W-1:0] data_o,
@@ -21,7 +21,7 @@ module bsc #(
 	input  capture_i, // Capture DR
 	input  update_i,  // Update DR
 	input  mode_i
-)
+);
 
 wire [W-1:0] chain;
 wire [W-1:0] scan_next; 

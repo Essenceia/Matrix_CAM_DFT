@@ -12,19 +12,69 @@ module tt_um_essen(
 ); 
 localparam MODE_DATA   = 1'b0;
 localparam MODE_WEIGHT = 1'b1;
+localparam BSC_CHAIN_W = 6; // bsc scan chain length 
 
-/* data interface */ 
-(* MARK_BSC = "true" *) wire [7:0] data;
-(* MARK_BSC = "true" *) wire [7:0] result;
-(* MARK_BSC = "true" *) wire       result_v;
-(* MARK_BSC = "true" *) wire       data_v;
-(* MARK_BSC = "true" *) wire       date_mode; 
+assign uio_oe = 8'b1010_0000; 
 
-assign data       = ui_in;
-assign uo_out     = result;
-assign data_v     = uio_in[0];
-assign data_mode  = uio_in[1];
-assign uio_out[7] = result_v;
+/* I/O interface, marked for boundary scan insertion */ 
+(* MARK_BSC = "in"  *) wire       data_v_bsc;
+(* MARK_BSC = "in"  *) wire       date_mode_bsc; 
+(* MARK_BSC = "in"  *) wire [7:0] data_bsc;
+(* MARK_BSC = "out" *) wire       result_v_bsc;
+(* MARK_BSC = "out" *) wire [7:0] result_bsc;
+
+wire [BSP_CHAIN_W-1:0] bsp_chain;
+wire bsp_tdo;
+wire bsp_shift;
+wire bsp_capture;
+wire bsp_update;
+wire bsp_mode; 
+
+wire       data_v;
+wire       date_mode; 
+wire [7:0] data;
+wire       result_v;
+wire [7:0] result;
+
+assign data_v_bsc    = uio_in[0];
+assign data_mode_bsc = uio_in[1];
+assign data_bsc      = ui_in;
+assign uio_out[7]    = result_v_bsc;
+assign uo_out        = result_bsc;
+
+assign bsp_chain[0] = tdi_i;
+assign bsp_tdo = bsp_chain[BSP_CHAIN_W-1];
+
+bsc #(W(1)) m_bsc_data_v_in(
+	.data_i(data_v_bsc), .data_o(data_v),
+	.scan_i(bsp_chain[0]), scan_o(bsp_chain[1]),
+	.shift_i(bsp_shift), .capture_i(bsp_capture), update_i(bsp_capture), mode_i(bsp_mode)
+	);	
+
+bsc #(W(1)) m_bsc_data_mode_in(
+	.data_i(data_mode_bsc), .data_o(data_mode),
+	.scan_i(bsp_chain[1]), scan_o(bsp_chain[2]),
+	.shift_i(bsp_shift), .capture_i(bsp_capture), update_i(bsp_capture), mode_i(bsp_mode)
+	);
+
+bsc #(W(8)) m_bsc_data_in(
+	.data_i(data_bsc), .data_o(data),
+	.scan_i(bsp_chain[2]), scan_o(bsp_chain[3]),
+	.shift_i(bsp_shift), .capture_i(bsp_capture), update_i(bsp_capture), mode_i(bsp_mode)
+	);
+
+bsc #(W(1)) m_bsc_result_v_out(
+	.data_i(result), .data_o(result_bsc),
+	.scan_i(bsp_chain[3]), scan_o(bsp_chain[4]),
+	.shift_i(bsp_shift), .capture_i(bsp_capture), update_i(bsp_capture), mode_i(bsp_mode)
+	);
+
+bsc #(W(8)) m_bsc_result_out(
+	.data_i(result_v), .data_o(result_v_bsc),
+	.scan_i(bsp_chain[4]), scan_o(bsp_chain[5]),
+	.shift_i(bsp_shift), .capture_i(bsp_capture), update_i(bsp_capture), mode_i(bsp_mode)
+	);
+
 
 /* DFT interface */ 
 wire tck;
@@ -37,7 +87,6 @@ assign tdi        = uio_in[3];
 assign tms        = uio_in[4];
 assign uio_out[5] = tdo;
 
-assign uio_oe = 8'b1010_0000; 
 
 // input/output interface boundary scan 
 
