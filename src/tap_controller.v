@@ -125,7 +125,6 @@ always @(posedge tck_i) begin
 end
 
 /* USER REGISTER */
-localparam UREG_W
 reg [UREG_W-1:0] ureg_addr_q, ureg_data_q, ureg_tdi_q;
 always @(posedge tck_i) begin
 	if (fsm_q == DR_CAPTURE) begin
