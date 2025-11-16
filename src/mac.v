@@ -11,25 +11,58 @@ module mac #(
 	parameter N  // matrix dimention
 )(
 	input clk, 
+	input rst,
 	
 	input data_v_i,
 	input data_mode_i,
-	input data_reset_addr_i,
+	input data_rst_addr_i,
 	input [W-1:0] data_i, 
 
 	output result_v_o, 
 	output [W-1:0] result_o
 );
-wire [W-1:0] wr_weight;
-wire         wr_weight_v[N-1:0][N-1:0];
+localparam NN = N*N
+genvar x,y; 
 
-reg  [W-1:0] data_input_q[N-1:0];
+/* FSM */
+wire [NN-1:0] wr_weight_v_flat; // limited support for multidimentional array in the simulator 
+wire          wr_weight_v[N-1:0][N-1:0];
+wire [N-1:0]  wr_data_v;
+reg  [W-1:0]  data_input_q[N-1:0];
+wire          cam_step; 
+
+mac_fsm #(.N(N), .NN(NN)) m_fsm(
+	.clk(clk),
+	.rst(rst),
+
+	.data_v_i(data_v_i),
+	.data_mode_i(data_mode_i),
+	.data_rst_addr_i(data_rst_addr_i),
+
+	.wr_weight_v_o(wr_weight_v_flat),
+	.wr_data_v_o(wr_data_v),
+	
+	.cam_step_o(cam_step)
+);
+generate 
+	for(x=0; x<N; x=x+1) begin: g_wr_weight_v_x
+		for(y=0; y<N; y=y+1) begin: g_wr_weight_v_y
+			assign wr_weight_v[x][y] = wr_weight_v_flat[y*N+x];
+		end
+	end
+	for(y=0; y<N; y=y+1) begin: g_wr_data_y
+		always @(posedge clk) 
+			if (wr_data_v[y])data_input_q[y] <= data_i;
+	end
+endgenerate
+
+/* Systolic array */ 
+
 wire [W-1:0] data_uint[N-1:0][N-1:0];
 wire [W-1:0] data_flow_right[N-1:0][N-1:0];
 wire [W-1:0] data_top_unit[N-1:0][N-1:0];
 wire [W-1:0] res_uint[N-1:0][N-1:0];
 
-genvar x,y; 
 generate 
 	for(y=0; y<N; y=y+1) begin: g_data_unit
 		assign data_unit[0][y] = data_input_q[y];
@@ -55,7 +88,7 @@ generate
 				.data_top_i(data_top_unit[x][y]),
 
 				.wr_weight_v_i(wr_weight_v[x][y]),	
-				.weight_i(wr_weight),
+				.weight_i(data_i),
 
 				.data_o(data_flow_right[x][y]),
 				.res_o(res_unit[x][y])
