@@ -20,16 +20,30 @@ module mac #(
 	output result_v_o, 
 	output [W-1:0] result_o
 );
-reg  [W-1:0] weight_input_q[N-1:0];
+wire [W-1:0] wr_weight;
+wire         wr_weight_v[N-1:0][N-1:0];
+
 reg  [W-1:0] data_input_q[N-1:0];
 wire [W-1:0] data_uint[N-1:0][N-1:0];
-wire [W-1:0] res_uint[N-1:0][N-1:0];
+wire [W-1:0] data_flow_right[N-1:0][N-1:0];
 wire [W-1:0] data_top_unit[N-1:0][N-1:0];
+wire [W-1:0] res_uint[N-1:0][N-1:0];
 
 genvar x,y; 
 generate 
 	for(y=0; y<N; y=y+1) begin: g_data_unit
 		assign data_unit[0][y] = data_input_q[y];
+		for(x=1; x<N; x=x+1) begin: g_data_unit_flow
+			assign data_unit[x][y] = data_flow_right[x-1][y];
+		end
+	end
+
+	/* data top */
+	for(x=0; x < N; x=x+1) begin: g_data_top_x
+		assign data_top_unit[x][0] = {W{1'b0}};
+		for(y=1; y < N; y=y+1) begin: g_data_top_y
+			assign data_top_unit[x][y] = res_unit[x][y-1];
+		end		
 	end
 
 	for(x=0; x < N; x=x+1) begin: g_unit_x
@@ -38,11 +52,12 @@ generate
 				.clk(clk),
 				
 				.data_i(data_unit[x][y]),
-				.data_top_i(),
+				.data_top_i(data_top_unit[x][y]),
 
-				.weight_i(),
+				.wr_weight_v_i(wr_weight_v[x][y]),	
+				.weight_i(wr_weight),
 
-				.data_o(data_top_unit[x][y]),
+				.data_o(data_flow_right[x][y]),
 				.res_o(res_unit[x][y])
 			);		
 		end
