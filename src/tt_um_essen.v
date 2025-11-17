@@ -29,12 +29,12 @@ assign     uio_out[5:0] = 6'b0;
 (* MARK_BSC = "out" *) wire       result_v_bsc;
 (* MARK_BSC = "out" *) wire [7:0] result_bsc;
 
-wire [BSC_CHAIN_W-1:0] bsp_chain;
-wire bsp_tdo;
-wire bsp_shift;
-wire bsp_capture;
-wire bsp_update;
-wire bsp_mode; 
+wire [BSC_CHAIN_W-1:0] bsc_chain;
+wire bsc_tdo;
+wire bsc_shift;
+wire bsc_capture;
+wire bsc_update;
+wire bsc_mode; 
 
 wire       data_v;
 wire       date_mode; 
@@ -50,44 +50,44 @@ assign data_bsc      = ui_in;
 assign uio_out[7]    = result_v_bsc;
 assign uo_out        = result_bsc;
 
-assign bsp_chain[0] = tdi;
-assign bsp_tdo = bsp_chain[BSC_CHAIN_W-1];
+assign bsc_chain[0] = tdi;
+assign bsc_tdo = bsc_chain[BSC_CHAIN_W-1];
 
 bsc #(.W(1)) m_bsc_data_v_in(
 	.data_i(data_v_bsc), .data_o(data_v),
-	.scan_i(bsp_chain[0]), .scan_o(bsp_chain[1]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[0]), .scan_o(bsc_chain[1]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);	
 
 bsc #(.W(1)) m_bsc_data_mode_in(
 	.data_i(data_mode_bsc), .data_o(data_mode),
-	.scan_i(bsp_chain[1]), .scan_o(bsp_chain[2]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[1]), .scan_o(bsc_chain[2]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_data_rst_in(
 	.data_i(data_rst_bsc), .data_o(data_rst),
-	.scan_i(bsp_chain[2]), .scan_o(bsp_chain[3]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[2]), .scan_o(bsc_chain[3]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);
 
 
 bsc #(.W(8)) m_bsc_data_in(
 	.data_i(data_bsc), .data_o(data),
-	.scan_i(bsp_chain[3]), .scan_o(bsp_chain[4]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[3]), .scan_o(bsc_chain[4]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_result_v_out(
 	.data_i(result_v), .data_o(result_v_bsc),
-	.scan_i(bsp_chain[4]), .scan_o(bsp_chain[5]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[4]), .scan_o(bsc_chain[5]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(8)) m_bsc_result_out(
 	.data_i(result), .data_o(result_bsc),
-	.scan_i(bsp_chain[5]), .scan_o(bsp_chain[6]),
-	.shift_i(bsp_shift), .capture_i(bsp_capture), .update_i(bsp_capture), .mode_i(bsp_mode)
+	.scan_i(bsc_chain[5]), .scan_o(bsc_chain[6]),
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
 	);
 
 
@@ -101,13 +101,36 @@ wire trst;
 assign tck        = uio_in[3];
 assign tdi        = uio_in[4];
 assign tms        = uio_in[5];
-assign trst       = ~rst_n;
+assign trst       = ~rst_n | ~ena; // there is no power gating, stall the design if not enabled
 assign uio_out[6] = tdo;
 
 
 // input/output interface boundary scan 
 
 // JTAG 
+jtag #(.IR_W(3), 
+	.VERSION_NUM(0),
+	.PART_NUM(1),
+	.MANIFACTURE_ID(2),
+	.UREG_ADDR_W(2),
+	.UREG_DATA_W(8)
+	) m_jtag_tap (
+	.tck_i(tck),
+	.tms_i(tms),
+	.tdi_i(tdi),
+	.trst_i(trst),
+	.tdo_o(tdo),
+
+	.bsc_shift_o(bsc_shift),
+	.bsc_capture_o(bsc_capture),
+	.bsc_update_o(bsc_update),
+	.bsc_mode_o(bsc_mode),
+
+	.bsc_tdo_i(bsc_tdo),
+
+	.ureg_addr_o(),
+	.ureg_addr_i()
+);
 
 // MAC design
 mac #(.W(8), .N(2)) m_2x2_systolic_mac(

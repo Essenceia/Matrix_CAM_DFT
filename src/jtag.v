@@ -6,7 +6,7 @@
 
 `timescale 1ns / 1ps
 
-module tap_contolle #(
+module jtag #(
 	parameter IR_W,
 	parameter [3:0]  VERSION_NUM,
 	parameter [15:0] PART_NUM,
@@ -15,8 +15,6 @@ module tap_contolle #(
 	parameter UREG_DATA_W, // user register size
 	parameter UREG_W = $max(UREG_ADDR_W, UREG_DATA_W)
 	)(
-	input  ena_i, 
-
 	input  tck_i, 
 	input  tms_i, 
 	input  tdi_i,
@@ -70,7 +68,7 @@ reg [3:0] fsm_q;
 always @(posedge tck_i or posedge trst_i) begin
 	if (trst_i) begin 
 		fsm_q <= RESET;
-	end else if (ena_i) begin // block isn't going to be power gatted
+	end else if () begin // block isn't going to be power gatted
 		case(fsq_q)
 			RESET:      fsm_q <= tms_i? RESET: IDLE;
 			IDLE:       fsm_q <= tms_i? DR_SELECT: IDLE;
