@@ -4,6 +4,8 @@ from cocotb.triggers import ClockCycles
 
 import utils
 
+N = 2 # matrix dimention 
+
 def start_clk(dut):
     clock = Clock(dut.clk, 10, unit="us")
     cocotb.start_soon(clock.start()) #runs the clock "in the background" 
@@ -28,21 +30,32 @@ async def rst(dut, ena=1, start_jtag=0):
     dut.ena.value = ena
     await ClockCycles(dut.clk,10)
 
-# utils 
 
-# send weights to cam array 
+def mac(W,I):
+    res = bytearray(N*N)
+    assert(len(W) == N*N)
+    assert(len(I) == N*N)
+    for x in range(0,N):
+        for y in range(0,N):
+            for ix in range(0,N):
+                res[y*N+x] += I[y*N+ix]*W[ix*N+x]
+    return res
 
 @cocotb.test()
 async def simple_cam_test(dut):
     await rst(dut) 
+    W = bytearray([0, 1, 2, 3]) 
+    I = bytearray([4, 5, 6, 7])
 
     await utils.rst_data_addr(dut)
 
     # send weights 
-    await utils.write_config(dut, bytearray([0, 1, 2,3]), weight=True)
+    await utils.write_config(dut, W, weight=True)
     # send data
-    await utils.write_config(dut, bytearray([4, 5, 6, 7]), weight=False)
+    await utils.write_config(dut, I , weight=False)
 
+    # check result
+    cocotb.log.info(' '.join(map(str, mac(W,I))))
     # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 100)
 
