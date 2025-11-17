@@ -58,6 +58,6 @@ always @(posedge clk)
 
 assign wr_data_v_o = { wr_data_pos_q[N-1], ~wr_data_pos_q[N-1]};
 always @(posedge clk) 
-	if (en_q)  mac_step_q <= wr_data_pos_q != 2'd1;
+	if (en_q)  mac_step_q <= wr_data_v & wr_data_pos_q != 2'd1;
 assign mac_step_o = mac_step_q;
 endmodule
