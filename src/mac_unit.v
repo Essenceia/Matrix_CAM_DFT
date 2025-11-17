@@ -10,6 +10,8 @@ module mac_unit #(
 	parameter W
 	)(
 	input clk, 
+
+	input         step_i, 
 	
 	input [W-1:0] data_i, //right side input data
 	input [W-1:0] data_top_i, // top input data
@@ -21,16 +23,20 @@ module mac_unit #(
 	output [W-1:0] res_o // result, become the top input data for the next unit bellow
 ); 
 
+reg  [W-1:0] data_q;
 reg  [W-1:0] weight_q;
 wire [W-1:0] unused_mul, mul;
-reg         unused_add; 
+reg          unused_add;
+
+always @(posedge clk) 
+	if (step_i) data_q <= data_i;
+ 
 always @(posedge clk) 
 	if (wr_weight_v_i) weight_q <= weight_i;
 
-assign {unused_mul, mul} = data_i * weight_q;
+assign {unused_mul, mul} = data_q * weight_q;
 
-always @(posedge clk) begin
-	{unused_add, res_o } <= mul + data_top_i;
-	data_o <= data_i;
-end
+assign {unused_add, res_o } = mul + data_top_i;
+assign data_o = data_q;
+
 endmodule

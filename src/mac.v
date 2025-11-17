@@ -11,7 +11,8 @@ module mac #(
 	parameter N  // matrix dimention
 )(
 	input clk, 
-	input rst,
+	input rst_n,
+	input ena,
 	
 	input data_v_i,
 	input data_mode_i,
@@ -21,19 +22,20 @@ module mac #(
 	output result_v_o, 
 	output [W-1:0] result_o
 );
-localparam NN = N*N
+localparam NN = N*N;
 genvar x,y; 
 
 /* FSM */
-wire [NN-1:0] wr_weight_v_flat; // limited support for multidimentional array in the simulator 
-wire          wr_weight_v[N-1:0][N-1:0];
-wire [N-1:0]  wr_data_v;
+logic [NN-1:0] wr_weight_v_flat; // limited support for multidimentional array in the simulator 
+logic          wr_weight_v[N-1:0][N-1:0];
+logic [N-1:0]  wr_data_v;
 reg  [W-1:0]  data_input_q[N-1:0];
-wire          cam_step; 
+logic          mac_step; 
 
 mac_fsm #(.N(N), .NN(NN)) m_fsm(
 	.clk(clk),
-	.rst(rst),
+	.rst_n(rst_n),
+	.ena(ena),
 
 	.data_v_i(data_v_i),
 	.data_mode_i(data_mode_i),
@@ -42,7 +44,7 @@ mac_fsm #(.N(N), .NN(NN)) m_fsm(
 	.wr_weight_v_o(wr_weight_v_flat),
 	.wr_data_v_o(wr_data_v),
 	
-	.cam_step_o(cam_step)
+	.mac_step_o(mac_step)
 );
 generate 
 	for(x=0; x<N; x=x+1) begin: g_wr_weight_v_x
@@ -58,10 +60,10 @@ endgenerate
 
 /* Systolic array */ 
 
-wire [W-1:0] data_uint[N-1:0][N-1:0];
-wire [W-1:0] data_flow_right[N-1:0][N-1:0];
-wire [W-1:0] data_top_unit[N-1:0][N-1:0];
-wire [W-1:0] res_uint[N-1:0][N-1:0];
+logic [W-1:0] data_unit[N-1:0][N-1:0];
+logic [W-1:0] data_flow_right[N-1:0][N-1:0];
+logic [W-1:0] data_top_unit[N-1:0][N-1:0];
+logic [W-1:0] res_unit[N-1:0][N-1:0];
 
 generate 
 	for(y=0; y<N; y=y+1) begin: g_data_unit
@@ -83,7 +85,9 @@ generate
 		for(y=0; y < N; y=y+1) begin: g_unit_y
 			mac_unit #(.W(W)) m_unit(
 				.clk(clk),
-				
+			
+				.step_i(mac_step),
+	
 				.data_i(data_unit[x][y]),
 				.data_top_i(data_top_unit[x][y]),
 
@@ -96,6 +100,9 @@ generate
 		end
 	end
 endgenerate
+// TODO get result
+assign result_v_o = 1'b1;
+assign result_o = res_unit[N-1][N-1];
 
 endmodule
 

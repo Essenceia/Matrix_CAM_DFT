@@ -9,11 +9,12 @@
 `timescale 1ns / 1ps
 
 module mac_fsm #(
-	parameter N
+	parameter N,
 	parameter NN = N*N
 )(
 	input clk, 
-	input rst, 
+	input rst_n, 
+	input ena,
 
 	input data_v_i, 
 	input data_mode_i, 
@@ -22,7 +23,7 @@ module mac_fsm #(
 	output [NN-1:0] wr_weight_v_o,
 	output [N-1:0]  wr_data_v_o,
 
-	output cam_step_o // cam step through 
+	output mac_step_o // cam step through 
 
 );
 localparam MODE_DATA   = 1'b0;
@@ -34,7 +35,7 @@ reg [NN-1:0] wr_weight_pos_q;
 
 assign wr_weight_v = data_v_i & (data_mode_i == MODE_WEIGHT);
 always @(posedge clk) 
-	if (rst | wr_weight_v & mode_rst_addr_i ) wr_weight_pos_q <= {{NN-1{1'b0}}, 1'b1};
+	if (~rst_n | wr_weight_v & data_rst_addr_i ) wr_weight_pos_q <= {{NN-1{1'b0}}, 1'b1};
 	else if (wr_weight_v) wr_weight_pos_q <= { wr_weight_pos_q[NN-2:0], 1'b0};
 
 assign wr_weight_v_o = {NN{wr_weight_v}} & wr_weight_pos_q;
@@ -46,9 +47,17 @@ reg         unused_add_q;
 
 assign wr_data_v = data_v_i & (data_mode_i == MODE_DATA);
 always @(posedge clk) 
-	if (rst | wr_data_v & mode_rst_addr_i ) wr_data_pos_q <= {N{1'b0}};
+	if (~rst_n | wr_data_v & data_rst_addr_i ) wr_data_pos_q <= {N{1'b0}};
 	else if (wr_data_v) {unused_add_q, wr_data_pos_q} <= wr_data_pos_q + {{N-1{1'b0}}, 1'b1};
 
+/* N dimention dependant logic */
+reg mac_step_q;
+reg en_q;
+always @(posedge clk) 
+	en_q <= ena;
+
 assign wr_data_v_o = { wr_data_pos_q[N-1], ~wr_data_pos_q[N-1]};
-  
+always @(posedge clk) 
+	if (en_q)  mac_step_q <= wr_data_pos_q != 2'd1;
+assign mac_step_o = mac_step_q;
 endmodule
