@@ -7,7 +7,7 @@
 `timescale 1ns / 1ps
 
 module mac_unit #(
-	parameter W
+	parameter W = 8
 	)(
 	input clk, 
 

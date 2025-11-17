@@ -12,7 +12,7 @@
 `timescale 1ns / 1ps
 
 module bsc #(
-	parameter W
+	parameter W = 1
 	)(
 	input  [W-1:0] data_i,
 	output [W-1:0] data_o,

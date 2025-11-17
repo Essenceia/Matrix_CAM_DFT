@@ -8,8 +8,8 @@
 `timescale 1ns / 1ps
 
 module ir #(
-	parameter          W,// IR length
-	parameter [W-1:0] RESET_OPCODE // can be IDCODE of BYPASS according to spec
+	parameter          W=2,// IR length
+	parameter [W-1:0] RESET_OPCODE = 2'd0// can be IDCODE of BYPASS according to spec
     )(
 	input  rst_tap,
 

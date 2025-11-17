@@ -7,8 +7,8 @@
 `timescale 1ns / 1ps
 
 module mac #(
-	parameter W, // data and weight width
-	parameter N  // matrix dimention
+	parameter W = 8, // data and weight width
+	parameter N = 2 // matrix dimention
 )(
 	input clk, 
 	input rst_n,

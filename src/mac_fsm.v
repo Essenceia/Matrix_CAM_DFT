@@ -9,7 +9,7 @@
 `timescale 1ns / 1ps
 
 module mac_fsm #(
-	parameter N,
+	parameter N = 2,
 	parameter NN = N*N
 )(
 	input clk, 

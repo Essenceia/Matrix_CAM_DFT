@@ -7,12 +7,12 @@
 `timescale 1ns / 1ps
 
 module jtag #(
-	parameter IR_W,
-	parameter [3:0]  VERSION_NUM,
-	parameter [15:0] PART_NUM,
-	parameter [10:0] MANIFACTURE_ID,
-	parameter UREG_ADDR_W, // user register address size
-	parameter UREG_DATA_W, // user register size
+	parameter IR_W = 3,
+	parameter [3:0]  VERSION_NUM = 4'he,
+	parameter [15:0] PART_NUM = 16'hbeef,
+	parameter [10:0] MANIFACTURE_ID = 11'hff,
+	parameter UREG_ADDR_W = 2, // user register address size
+	parameter UREG_DATA_W = 8, // user register size
 	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
 	input  ena, 
@@ -138,6 +138,7 @@ end
 
 /* DR */ 
 wire dr_tdo;
+reg  rst_q;
 
 assign bsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
 assign bsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
