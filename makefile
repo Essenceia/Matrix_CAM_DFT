@@ -74,7 +74,7 @@ lint_fpga: $(fpga_deps)
 test:
 	$(MAKE) -C $(TB_DIR) WAVES=1
 
-wave: 
+waves: 
 	gtkwave $(TB_DIR)/tb.vcd $(TB_DIR)/tb.gtkw &
 
 ###############
