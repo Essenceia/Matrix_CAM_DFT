@@ -37,8 +37,8 @@ wire bsc_update;
 wire bsc_mode; 
 
 wire       data_v;
-wire       date_mode; 
-wire       date_rst; 
+wire       data_mode; 
+wire       data_rst; 
 wire [7:0] data;
 wire       result_v;
 wire [7:0] result;
@@ -56,38 +56,38 @@ assign bsc_tdo = bsc_chain[BSC_CHAIN_W-1];
 bsc #(.W(1)) m_bsc_data_v_in(
 	.data_i(data_v_bsc), .data_o(data_v),
 	.scan_i(bsc_chain[0]), .scan_o(bsc_chain[1]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);	
 
 bsc #(.W(1)) m_bsc_data_mode_in(
 	.data_i(data_mode_bsc), .data_o(data_mode),
 	.scan_i(bsc_chain[1]), .scan_o(bsc_chain[2]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_data_rst_in(
 	.data_i(data_rst_bsc), .data_o(data_rst),
 	.scan_i(bsc_chain[2]), .scan_o(bsc_chain[3]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 
 bsc #(.W(8)) m_bsc_data_in(
 	.data_i(data_bsc), .data_o(data),
 	.scan_i(bsc_chain[3]), .scan_o(bsc_chain[4]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_result_v_out(
 	.data_i(result_v), .data_o(result_v_bsc),
 	.scan_i(bsc_chain[4]), .scan_o(bsc_chain[5]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(8)) m_bsc_result_out(
 	.data_i(result), .data_o(result_bsc),
 	.scan_i(bsc_chain[5]), .scan_o(bsc_chain[6]),
-	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_capture), .mode_i(bsc_mode)
+	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 
@@ -115,6 +115,8 @@ jtag #(.IR_W(3),
 	.UREG_ADDR_W(2),
 	.UREG_DATA_W(8)
 	) m_jtag_tap (
+	.ena(ena), 
+
 	.tck_i(tck),
 	.tms_i(tms),
 	.tdi_i(tdi),

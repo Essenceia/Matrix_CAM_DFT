@@ -81,7 +81,7 @@ always @(posedge update_i)
 	ff_2_q <= ff_2_next;
 
 assign scan_o = ff_1_q; 
-assign data_o = ff_2_q; 
+assign data_o = mode_i ? ff_2_q : data_i; 
  
 endmodule
 

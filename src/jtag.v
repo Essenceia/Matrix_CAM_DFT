@@ -15,6 +15,8 @@ module jtag #(
 	parameter UREG_DATA_W, // user register size
 	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
+	input  ena, 
+
 	input  tck_i, 
 	input  tms_i, 
 	input  tdi_i,
@@ -36,11 +38,11 @@ module jtag #(
  * the case for the following two instructions : 
  * EXTEST - 0
  * BYPASS - max (all ones)  */
-localparam [IR_W-1:0] EXTEST         = {IR_W-1{1'b0}};// 0 - spec defined
-localparam [IR_W-1:0] IDCODE         = {{IR_W-2{1'b0}}, 1'b1}; // 1
-localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-3{1'b0}}, 2'b1}; // 2
-localparam [IR_W-1:0] USER_REG       = {{IR_W-3{1'b0}}, 2'b1}; // 3
-localparam [IR_W-1:0] BYPASS         = {IR_W-1{1'b1}};         // max
+localparam [IR_W-1:0] EXTEST         = {IR_W{1'b0}};// 0 - spec defined
+localparam [IR_W-1:0] IDCODE         = {{IR_W-1{1'b0}}, 1'b1}; // 1
+localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-2{1'b0}}, 2'b1}; // 2
+localparam [IR_W-1:0] USER_REG       = {{IR_W-2{1'b0}}, 2'b1}; // 3
+localparam [IR_W-1:0] BYPASS         = {IR_W{1'b1}};         // max
 
 /* part identifier, returned on IDCODE */
 localparam [31:0] PART_ID = {VERSION_NUM, PART_NUM, MANIFACTURE_ID, 1'b1};
@@ -65,8 +67,8 @@ localparam IR_UPDATE  = 15;
 reg [3:0] fsm_q;
 
 /* fsm is reset though the RESET TAP */
-always @(posedge tck_i or posedge trst_i) begin
-	if (trst_i) begin 
+always @(posedge tck_i) begin
+	if (trst_i | ~ena) begin 
 		fsm_q <= RESET;
 	end else begin // block isn't going to be power gatted
 		case(fsm_q)
