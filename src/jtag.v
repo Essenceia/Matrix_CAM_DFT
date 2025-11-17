@@ -13,7 +13,7 @@ module jtag #(
 	parameter [10:0] MANIFACTURE_ID,
 	parameter UREG_ADDR_W, // user register address size
 	parameter UREG_DATA_W, // user register size
-	parameter UREG_W = $max(UREG_ADDR_W, UREG_DATA_W)
+	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
 	input  tck_i, 
 	input  tms_i, 
@@ -21,12 +21,12 @@ module jtag #(
 	input  trst_i, // optional, adding to guaranty FSM is in reset to help reduce power 
 	output tdo_o,
 
-	output dsc_shift_o,
-	output dsc_capture_o,
-	output dsc_update_o,
-	output dsc_mode_o,
+	output bsc_shift_o,
+	output bsc_capture_o,
+	output bsc_update_o,
+	output bsc_mode_o,
 
-	input dsc_tdo_i,
+	input bsc_tdo_i,
 
 	output [UREG_W-1:0] ureg_addr_o,
 	input  [UREG_W-1:0] ureg_data_i	
@@ -68,8 +68,8 @@ reg [3:0] fsm_q;
 always @(posedge tck_i or posedge trst_i) begin
 	if (trst_i) begin 
 		fsm_q <= RESET;
-	end else if () begin // block isn't going to be power gatted
-		case(fsq_q)
+	end else begin // block isn't going to be power gatted
+		case(fsm_q)
 			RESET:      fsm_q <= tms_i? RESET: IDLE;
 			IDLE:       fsm_q <= tms_i? DR_SELECT: IDLE;
 			DR_SELECT:  fsm_q <= tms_i? IR_SELECT: DR_CAPTURE; 
@@ -118,7 +118,7 @@ end
 /* BYPASS */
 reg bypass_q;
 always @(posedge tck_i) begin
-	if (fsm_q == DR_CAPTURE) bypass_q; 
+	if (fsm_q == DR_CAPTURE) bypass_q <= 1'b0; 
 	else if (fsm_q == DR_SHIFT) bypass_q <= tdi_i;	
 end
 
@@ -137,15 +137,15 @@ end
 /* DR */ 
 wire dr_tdo;
 
-assign dsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
-assign dsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
-assign dsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
-assign dsc_mode_o    = fsm_q == DR_UPDATE  & ir == EXTEST;
+assign bsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
+assign bsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
+assign bsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
+assign bsc_mode_o    = fsm_q == DR_UPDATE  & ir == EXTEST;
 
 /* TDO mux */
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
 				(ir == BYPASS) ? bypass_q : 
-				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo:
+				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo_i:
 				(ir == USER_REG)? ureg_data_q[0]: 
 				1'b0; // TODO custom reg
 

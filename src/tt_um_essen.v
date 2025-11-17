@@ -129,7 +129,7 @@ jtag #(.IR_W(3),
 	.bsc_tdo_i(bsc_tdo),
 
 	.ureg_addr_o(),
-	.ureg_addr_i()
+	.ureg_data_i()
 );
 
 // MAC design
