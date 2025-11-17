@@ -156,8 +156,7 @@ assign bsc_mode_o    = mode_mask_q & fsm_q == DR_UPDATE  & ir == EXTEST;
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
 				(ir == BYPASS) ? bypass_q : 
 				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo_i:
-				(ir == USER_REG)? ureg_data_q[0]: 
-				1'b0; // TODO custom reg
+				ureg_data_q[0]; // USER_REG
 
 assign tdo_o = (fsm_q == IR_SHIFT)? ir_tdo: 
 			   dr_tdo;

@@ -49,7 +49,7 @@ mac_fsm #(.N(N), .NN(NN)) m_fsm(
 generate 
 	for(x=0; x<N; x=x+1) begin: g_wr_weight_v_x
 		for(y=0; y<N; y=y+1) begin: g_wr_weight_v_y
-			assign wr_weight_v[x][y] = wr_weight_v_flat[y*N+x];
+			assign wr_weight_v[x][y] = wr_weight_v_flat[x*N+y];
 		end
 	end
 	for(y=0; y<N; y=y+1) begin: g_wr_data_y

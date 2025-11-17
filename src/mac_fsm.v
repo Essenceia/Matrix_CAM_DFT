@@ -36,7 +36,7 @@ reg [NN-1:0] wr_weight_pos_q;
 assign wr_weight_v = data_v_i & (data_mode_i == MODE_WEIGHT);
 always @(posedge clk) 
 	if (~rst_n | wr_weight_v & data_rst_addr_i ) wr_weight_pos_q <= {{NN-1{1'b0}}, 1'b1};
-	else if (wr_weight_v) wr_weight_pos_q <= { wr_weight_pos_q[NN-2:0], 1'b0};
+	else if (wr_weight_v) wr_weight_pos_q <= { wr_weight_pos_q[NN-2:0], wr_weight_pos_q[NN-1]};
 
 assign wr_weight_v_o = {NN{wr_weight_v}} & wr_weight_pos_q;
 
