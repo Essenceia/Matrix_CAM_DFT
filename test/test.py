@@ -15,8 +15,8 @@ async def test_project(dut):
     cocotb.start_soon(clk.start())
 
     # Set the clock period to 100 us (10 KHz)
-    jtag_clk = Clock(dut.dut.tck, 100, unit="us")
-    cocotb.start_soon(jtag_clk.start())
+    #jtag_clk = Clock(dut.dut.tck, 100, unit="us")
+    #cocotb.start_soon(jtag_clk.start())
 
     # Reset
     dut._log.info("Reset")
@@ -24,7 +24,7 @@ async def test_project(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 100)
+    await ClockCycles(dut.clk, 10)
     dut.rst_n.value = 1
 
     dut._log.info("Test project behavior")

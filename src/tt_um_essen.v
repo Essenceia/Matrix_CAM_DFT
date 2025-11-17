@@ -115,6 +115,7 @@ jtag #(.IR_W(3),
 	.UREG_ADDR_W(2),
 	.UREG_DATA_W(8)
 	) m_jtag_tap (
+	.rst_n(rst_n),
 	.ena(ena), 
 
 	.tck_i(tck),

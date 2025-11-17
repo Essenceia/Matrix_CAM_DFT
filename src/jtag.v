@@ -15,6 +15,7 @@ module jtag #(
 	parameter UREG_DATA_W = 8, // user register size
 	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
+	input  rst_n,
 	input  ena, 
 
 	input  tck_i, 
@@ -138,12 +139,18 @@ end
 
 /* DR */ 
 wire dr_tdo;
-reg  rst_q;
+reg  mode_mask_q;
+always @(posedge tck_i or negedge rst_n) begin
+  if (~rst_n)
+    mode_mask_q <= 1'b0;  
+  else
+    mode_mask_q <= 1'b1;
+end
 
 assign bsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
 assign bsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
 assign bsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
-assign bsc_mode_o    = fsm_q == DR_UPDATE  & ir == EXTEST;
+assign bsc_mode_o    = mode_mask_q & fsm_q == DR_UPDATE  & ir == EXTEST;
 
 /* TDO mux */
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
