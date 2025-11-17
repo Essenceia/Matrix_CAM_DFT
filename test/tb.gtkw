@@ -1,32 +1,66 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Mon Nov 17 04:33:00 2025
+[*] Mon Nov 17 16:55:54 2025
 [*]
 [dumpfile] "/home/pitchu/rtl/mac_dft/test/tb.vcd"
-[dumpfile_mtime] "Mon Nov 17 04:26:54 2025"
-[dumpfile_size] 2597
+[dumpfile_mtime] "Mon Nov 17 16:54:45 2025"
+[dumpfile_size] 2802
 [savefile] "/home/pitchu/rtl/mac_dft/test/tb.gtkw"
 [timestart] 0
-[size] 1910 470
+[size] 1910 515
 [pos] -1 -1
-*-28.534533 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.534533 214300000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.dut.
+[treeopen] tb.dut.m_2x2_systolic_mac.
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].
 [sst_width] 297
 [signals_width] 230
 [sst_expanded] 1
-[sst_vpaned_height] 200
+[sst_vpaned_height] 256
 @28
 tb.clk
 tb.rst_n
-tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.clk
 @22
 tb.dut.data[7:0]
 tb.dut.data_bsc[7:0]
-@29
+@28
+tb.dut.tck
 tb.dut.data_mode
 @22
 tb.dut.m_jtag_tap.fsm_q[3:0]
+@28
+tb.dut.m_jtag_tap.mode_mask_q
+tb.dut.m_2x2_systolic_mac.m_fsm.data_mode_i
+tb.dut.m_2x2_systolic_mac.m_fsm.mac_step_q
+@200
+-fsm
+@28
+tb.dut.m_2x2_systolic_mac.m_fsm.data_v_i
+tb.dut.m_2x2_systolic_mac.m_fsm.data_mode_i
+tb.dut.m_2x2_systolic_mac.m_fsm.data_rst_addr_i
+tb.dut.m_2x2_systolic_mac.m_fsm.wr_weight_v
+tb.dut.m_2x2_systolic_mac.m_fsm.wr_weight_pos_q[3:0]
+@201
+-0,0
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.weight_q[7:0]
+@200
+-0,1
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.weight_q[7:0]
+@200
+-1,0
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.weight_q[7:0]
+@200
+-1,1
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.weight_q[7:0]
 [pattern_trace] 1
 [pattern_trace] 0
