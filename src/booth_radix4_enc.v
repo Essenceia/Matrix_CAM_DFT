@@ -20,6 +20,7 @@ module booth_radix4_enc(
 	input [7:0] data_i,
 
 	output [8:0] res_o,
+	output       ext_o, // multiplicat sign extension bit
 	output       sign_o
 );
 wire neg, single, shift2;
@@ -42,6 +43,7 @@ assign neg_mask  = {9{neg}};
 assign post_shift = {1'b0, data_i & single_mask} | {data_i & double_mask, 1'b0};
 assign res_o = post_shift ^ neg_mask; 
 assign sign_o = neg; 
+assign ext_o = data_i[7];
 
 endmodule
 
