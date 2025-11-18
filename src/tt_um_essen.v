@@ -1,4 +1,5 @@
 `timescale 1ns / 1ps
+`default_nettype none 
 
 module tt_um_essen(
 	input  wire [7:0] ui_in,    // Dedicated inputs

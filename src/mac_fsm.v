@@ -51,6 +51,7 @@ always @(posedge clk)
 	else if (wr_data_v) {unused_add_q, wr_data_pos_q} <= wr_data_pos_q + {{N-1{1'b0}}, 1'b1};
 
 /* N dimention dependant logic */
+reg last_step_q;
 reg mac_step_q;
 reg en_q;
 always @(posedge clk) 
@@ -58,6 +59,13 @@ always @(posedge clk)
 
 assign wr_data_v_o = { wr_data_pos_q[N-1], ~wr_data_pos_q[N-1]};
 always @(posedge clk) 
-	if (en_q)  mac_step_q <= wr_data_v & wr_data_pos_q != 2'd1;
+	if (~rst_n) last_step_q <= 1'b0;
+	else last_step_q <= wr_data_v & wr_data_pos_q == NN-1; 
+
+always @(posedge clk) 
+	if (en_q)  begin
+		mac_step_q <= wr_data_v & wr_data_pos_q != 2'd1 | last_step_q;
+	end
+
 assign mac_step_o = mac_step_q;
 endmodule
