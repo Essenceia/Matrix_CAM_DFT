@@ -5,6 +5,7 @@
  */
 
 `timescale 1ns / 1ps
+`default_nettype none 
 
 module mac_unit #(
 	parameter W = 8
@@ -25,7 +26,7 @@ module mac_unit #(
 
 reg  [W-1:0] data_q;
 reg  [W-1:0] weight_q;
-wire [W-1:0] unused_mul, mul;
+wire [2*W-1:0] mul;
 reg          unused_add;
 
 always @(posedge clk) 
@@ -34,9 +35,14 @@ always @(posedge clk)
 always @(posedge clk) 
 	if (wr_weight_v_i) weight_q <= weight_i;
 
-assign {unused_mul, mul} = data_q * weight_q;
+booth_randix4_mul m_mul(
+	.data_i(data_q),
+	.w_i(weight_q),
+	.res_o(mul)
+);
 
-assign {unused_add, res_o } = mul + data_top_i;
+
+assign {unused_add, res_o } = mul[W-1:0] + data_top_i;
 assign data_o = data_q;
 
 endmodule
