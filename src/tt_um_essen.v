@@ -115,6 +115,10 @@ wire [UREG_ADDR_W-1:0] ureg_addr;
 wire [UREG_DATA_W-1:0] ureg_data;
 /* verilator lint_on UNDRIVEN */
 /* verilator lint_on UNUSED */
+
+// TODO connected properly 
+assign ureg_data = 8'b0; 
+
 jtag #(.IR_W(3), 
 	.VERSION_NUM(0),
 	.PART_NUM(1),
