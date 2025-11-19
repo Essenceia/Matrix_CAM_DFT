@@ -5,8 +5,14 @@ from cocotb.triggers import FallingEdge, RisingEdge, ClockCycles
 import random 
 import utils
 import asyncio
+from array import array 
 
 N = 2 # matrix dimention 
+
+MIN_W = -5
+MAX_W =  5
+MIN_I = -5
+MAX_I =  5 
 
 def start_clk(dut):
     clock = Clock(dut.clk, 10, unit="us")
@@ -34,22 +40,27 @@ async def rst(dut, ena=1, start_jtag=0):
 
 
 def mac(W,I):
-    res = bytearray(N*N)
+    res = array('b', [0,0,0,0])
     assert(len(W) == N*N)
     assert(len(I) == N*N)
     for x in range(0,N):
         for y in range(0,N):
             for ix in range(0,N):
-                res[y*N+x] += I[y*N+ix]*W[ix*N+x]
+                tmp = res[y*N+x] + I[y*N+ix]*W[ix*N+x] 
+                if (tmp >= 127):
+                    tmp = 127
+                if (tmp <= -128):
+                    tmp = -128
+                res[y*N+x] = tmp
     return res
 
 async def read_res(dut):
-    res = b''
+    res = array('b')
        
     while (len(res) != N*N):
         if (dut.result_v.value == 1):
-            x = dut.uo_out.value.to_unsigned()
-            res = res + bytes([x])
+            x = dut.uo_out.value.to_signed()
+            res.append(x)
         await ClockCycles(dut.clk, 1)
     
     return res 
@@ -67,8 +78,8 @@ async def compare_res(dut, W, I):
 @cocotb.test()
 async def simple_mac_test(dut):
     await rst(dut) 
-    W = bytearray([0, 1, 2, 3]) 
-    I = bytearray([4, 5, 6, 7])
+    W = array('b', [0, 1, 2, 3]) 
+    I = array('b', [4, 5, 6, 7])
 
     await utils.rst_data_addr(dut)
 
@@ -91,11 +102,11 @@ async def random_mac_test(dut):
     await rst(dut)
     await utils.rst_data_addr(dut)
     for _ in range(0, 50): 
-        W = b''
-        I = b''
+        W = array('b')
+        I = array('b')
         for _ in range(0,4):
-            W = W + bytes([random.randrange(0,10)])
-            I = I + bytes([random.randrange(0,10)])
+            W.append(random.randrange(MIN_W,MAX_W))
+            I.append(random.randrange(MIN_I,MAX_I))
 
 
         # send weights 
@@ -116,15 +127,15 @@ async def random_mac_reuse_weights_test(dut):
     await rst(dut)
     await utils.rst_data_addr(dut)
     for _ in range(0, 10): 
-        W = b''
+        W = array('b')
         for _ in range(0,4):
-            W = W + bytes([random.randrange(0,10)])
+            W.append(random.randrange(MIN_W,MAX_W))
         await utils.write_config(dut, W, weight=True)
 
         for _ in range(0, 10): 
-            I = b''
+            I = array('b')
             for _ in range(0,4):
-                I = I + bytes([random.randrange(0,10)])
+                I.append(random.randrange(MIN_I,MAX_I))
     
             # check result - results can start streaming before all the 
             # data has been written 

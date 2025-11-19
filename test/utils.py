@@ -2,6 +2,7 @@
 import cocotb
 from cocotb.triggers import ClockCycles
 import random 
+from array import array 
 
 N=2 # CAM array dimention 
 
@@ -52,7 +53,8 @@ def get_cmd(valid=True, mode=False, rst=False, tdi=False, tms=False):
 
     return ret
 
-
+def stou(n): 
+  return int.from_bytes(n.to_bytes(1, 'little', signed=True), 'little', signed=False)
 # Configure weight values.
 #
 # In practice it is not necessary for the weight config to be 
@@ -68,7 +70,7 @@ async def write_config(dut, X, weight=True):
     config = bytearray(0)
     for x in X: 
         assert(x >= -128 and x <= 127)
-        config.append(x)
+        config.append(stou(x))
 
     for i in range(0,N*N):
         if (random.randrange(0,100) > 75):
