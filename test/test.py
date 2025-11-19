@@ -102,12 +102,12 @@ async def simple_mac_test(dut):
 async def random_mac_test(dut):
     await rst(dut)
     await utils.rst_data_addr(dut)
-    for _ in range(0, 50): 
+    for _ in range(0, 500): 
         W = array('b')
         I = array('b')
         for _ in range(0,4):
-            W.append(random.randrange(MIN_W,MAX_W))
-            I.append(random.randrange(MIN_I,MAX_I))
+            W.append(utils.biased_random(MIN_W,MAX_W))
+            I.append(utils.biased_random(MIN_I,MAX_I))
 
 
         # send weights 
@@ -127,16 +127,16 @@ async def random_mac_test(dut):
 async def random_mac_reuse_weights_test(dut):
     await rst(dut)
     await utils.rst_data_addr(dut)
-    for _ in range(0, 10): 
+    for _ in range(0, 20): 
         W = array('b')
         for _ in range(0,4):
-            W.append(random.randrange(MIN_W,MAX_W))
+            W.append(utils.biased_random(MIN_W,MAX_W))
         await utils.write_config(dut, W, weight=True)
 
-        for _ in range(0, 10): 
+        for _ in range(0, 50): 
             I = array('b')
             for _ in range(0,4):
-                I.append(random.randrange(MIN_I,MAX_I))
+                I.append(utils.biased_random(MIN_I,MAX_I))
     
             # check result - results can start streaming before all the 
             # data has been written 

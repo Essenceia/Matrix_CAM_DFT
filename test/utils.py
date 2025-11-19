@@ -85,3 +85,17 @@ async def rst_data_addr(dut):
     await ClockCycles(dut.clk, 1)
     dut.uio_in.value = get_cmd(valid=True, mode=True, rst=True)
     await ClockCycles(dut.clk, 1)
+
+
+# bias random towards smaller number to get better coverage of math operations
+def biased_random(min, max):
+    assert(min <= -15)
+    assert(max >= 15)
+    if (random.randint(0,1)):
+        return random.randint(-5,5)
+    if (random.randint(0,1)):
+        return random.randint(-8,8)
+    if (random.randint(0,1)):
+        return random.randint(-10,10)
+    return random.randint(min, max)
+    
