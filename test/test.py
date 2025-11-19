@@ -4,6 +4,7 @@ from cocotb.triggers import FallingEdge, RisingEdge, ClockCycles
 
 import random 
 import utils
+import asyncio
 
 N = 2 # matrix dimention 
 
@@ -51,13 +52,16 @@ async def read_res(dut):
             res = res + bytes([x])
         await ClockCycles(dut.clk, 1)
     
-    cocotb.log.info("res :")
-    cocotb.log.info(' '.join(map(str, res)))
     return res 
 
 async def compare_res(dut, W, I):
     expected = mac(W,I)
     res = await read_res(dut) 
+
+    cocotb.log.info("expected vs got :")
+    cocotb.log.info(' '.join(map(str, expected)))
+    cocotb.log.info(' '.join(map(str, res)))
+    
     assert(res == expected) 
 
 @cocotb.test()
@@ -72,11 +76,14 @@ async def simple_mac_test(dut):
     await utils.write_config(dut, W, weight=True)
 
     # res can start comming in before all the data has been finished being written 
-    compare_res(dut, W, I) 
-
+    comp_task = cocotb.start_soon(compare_res(dut, W, I))
+        
     # send data
-    await utils.write_config(dut, I , weight=False)
-
+    write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+   
+    await write_task
+    await comp_task 
+        
     await ClockCycles(dut.clk, 10)
 
 @cocotb.test()
@@ -96,11 +103,13 @@ async def random_mac_test(dut):
     
         # check result - results can start streaming before all the 
         # data has been written 
-        compare_res(dut, W, I) 
+        comp_task = cocotb.start_soon(compare_res(dut, W, I))
         
         # send data
-        await utils.write_config(dut, I , weight=False) 
-
+        write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+   
+        await write_task
+        await comp_task 
 
 @cocotb.test()
 async def random_mac_reuse_weights_test(dut):
@@ -119,7 +128,9 @@ async def random_mac_reuse_weights_test(dut):
     
             # check result - results can start streaming before all the 
             # data has been written 
-            compare_res(dut, W, I) 
-            
-            # send data
-            await utils.write_config(dut, I , weight=False) 
+            comp_task = cocotb.start_soon(compare_res(dut, W, I))
+            # write data
+            write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+   
+            await write_task
+            await comp_task 
