@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Wed Nov 19 02:30:06 2025
+[*] Wed Nov 19 03:33:23 2025
 [*]
 [dumpfile] "/home/pitchu/rtl/mac_dft/test/tb.vcd"
-[dumpfile_mtime] "Wed Nov 19 02:28:46 2025"
-[dumpfile_size] 5541
+[dumpfile_mtime] "Wed Nov 19 03:29:47 2025"
+[dumpfile_size] 9686
 [savefile] "/home/pitchu/rtl/mac_dft/test/tb.gtkw"
-[timestart] 0
+[timestart] 1299000000
 [size] 1910 470
 [pos] -1 -1
-*-26.534533 374200000 320000000 354700000 365900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-26.534533 1822900000 320000000 354700000 365900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.dut.
 [treeopen] tb.dut.m_2x2_systolic_mac.
@@ -29,7 +29,6 @@ tb.dut.m_2x2_systolic_mac.data_i[7:0]
 @28
 tb.dut.m_2x2_systolic_mac.data_mode_i
 tb.dut.m_2x2_systolic_mac.data_rst_addr_i
-@29
 [color] 3
 tb.dut.m_2x2_systolic_mac.data_v_i
 @200
@@ -133,13 +132,15 @@ tb.dut.m_2x2_systolic_mac.res_wr[1:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.wr_data_pos_q[1:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.wr_data_v
 tb.dut.m_2x2_systolic_mac.m_fsm.mac_step_o
-tb.dut.m_2x2_systolic_mac.result_v_o
-@420
-tb.dut.m_2x2_systolic_mac.result_o[7:0]
-@28
-tb.dut.m_2x2_systolic_mac.m_fsm.rd_fsm_q[1:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.wr_fsm_q[2:0]
-tb.dut.m_2x2_systolic_mac.m_fsm.test
+tb.dut.m_2x2_systolic_mac.m_fsm.mac_step_q
+tb.dut.m_2x2_systolic_mac.m_fsm.rd_fsm_q[1:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.res_wr_o[1:0]
+@421
+[color] 2
+tb.dut.m_2x2_systolic_mac.result_o[7:0]
+@29
+[color] 2
+tb.dut.m_2x2_systolic_mac.result_v_o
 [pattern_trace] 1
 [pattern_trace] 0
