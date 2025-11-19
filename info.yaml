@@ -1,0 +1,64 @@
+# Tiny Tapeout project information
+project:
+  title:        ""      # Project title
+  author:       ""      # Your name
+  discord:      ""      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
+  description:  ""      # One line description of what your project does
+  language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
+  clock_hz:     20000000       # Clock frequency in Hz (or 0 if not applicable)
+
+  # How many tiles your design occupies? A single tile is about 340x160 uM.
+  tiles: "1x2"          # Valid values: 1x1, 1x2, 2x2, 3x2, 4x2, 3x4 or 4x4
+
+  # Your top module name must start with "tt_um_". Make it unique by including your github username:
+  top_module:  "tt_um_essen"
+
+  # List your project's source files here.
+  # Source files must be in ./src and you must list each source file separately, one per line.
+  # Don't forget to also update `PROJECT_SOURCES` in test/Makefile.
+  source_files:
+    - "project.v"
+    - "booth_radix4_enc.v"
+    - "bsc.v"
+    - "jtag.v" 
+    -  "mac_fsm.v"
+    - "tt_um_essen.v"
+    - "booth_radix4_mul.v"
+    - "ir.v"
+    - "mac.v"
+    - "mac_unit.v"
+# The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
+# This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
+pinout:
+  # Inputs
+  ui[0]: "data_i"
+  ui[1]: "data_i"
+  ui[2]: "data_i"
+  ui[3]: "data_i"
+  ui[4]: "data_i"
+  ui[5]: "data_i"
+  ui[6]: "data_i"
+  ui[7]: "data_i"
+
+  # Outputs
+  uo[0]: "result_o"
+  uo[1]: "result_o"
+  uo[2]: "result_o"
+  uo[3]: "result_o"
+  uo[4]: "result_o"
+  uo[5]: "result_o"
+  uo[6]: "result_o"
+  uo[7]: "result_o"
+
+  # Bidirectional pins
+  uio[0]: "data_valid_i"
+  uio[1]: "data_mode_i"
+  uio[2]: "data_rst_addr_i"
+  uio[3]: "tck"
+  uio[4]: "tdi"
+  uio[5]: "tms"
+  uio[6]: "tdo"
+  uio[7]: "result_v_o"
+
+# Do not change!
+yaml_version: 6
