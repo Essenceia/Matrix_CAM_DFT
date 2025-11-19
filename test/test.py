@@ -61,7 +61,7 @@ async def compare_res(dut, W, I):
     assert(res == expected) 
 
 @cocotb.test()
-async def simple_cam_test(dut):
+async def simple_mac_test(dut):
     await rst(dut) 
     W = bytearray([0, 1, 2, 3]) 
     I = bytearray([4, 5, 6, 7])
@@ -80,7 +80,7 @@ async def simple_cam_test(dut):
     await ClockCycles(dut.clk, 10)
 
 @cocotb.test()
-async def random_cam_test(dut):
+async def random_mac_test(dut):
     await rst(dut)
     await utils.rst_data_addr(dut)
     for _ in range(0, 50): 
@@ -100,3 +100,26 @@ async def random_cam_test(dut):
         
         # send data
         await utils.write_config(dut, I , weight=False) 
+
+
+@cocotb.test()
+async def random_mac_reuse_weights_test(dut):
+    await rst(dut)
+    await utils.rst_data_addr(dut)
+    for _ in range(0, 10): 
+        W = b''
+        for _ in range(0,4):
+            W = W + bytes([random.randrange(0,10)])
+        await utils.write_config(dut, W, weight=True)
+
+        for _ in range(0, 10): 
+            I = b''
+            for _ in range(0,4):
+                I = I + bytes([random.randrange(0,10)])
+    
+            # check result - results can start streaming before all the 
+            # data has been written 
+            compare_res(dut, W, I) 
+            
+            # send data
+            await utils.write_config(dut, I , weight=False) 
