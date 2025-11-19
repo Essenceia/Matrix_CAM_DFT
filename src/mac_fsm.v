@@ -130,12 +130,12 @@ always @(posedge clk) begin
 				res_wr_q <= 2'b00;
 			end
 			WR_0: begin
-			   wr_fsm_q <= (rd_fsm_q == RD_1_2)? WR_1 : WR_0;
+			   wr_fsm_q <= (rd_fsm_q == RD_1_2) & mac_step_q ? WR_1 : WR_0;
 			   res_wr_q <= res_rd_q; // 2'b01
 			end
 			WR_1: begin
-				wr_fsm_q <= (rd_fsm_q == RD_3)? WR_2: WR_1;
-				res_wr_q <= 2'b10;
+				wr_fsm_q <= (rd_fsm_q == RD_3) & mac_step_q ? WR_2: WR_1;
+				res_wr_q <= {mac_step_q , 1'b0};
 			end
 			WR_2: begin
 				wr_fsm_q <= WR_3;
