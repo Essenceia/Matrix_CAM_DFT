@@ -2,6 +2,7 @@ import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, ClockCycles
 
+import random 
 import utils
 
 N = 2 # matrix dimention 
@@ -48,7 +49,7 @@ async def read_res(dut):
             break
         await ClockCycles(dut.clk, 1)
         
-    while (dut.result_v.value == 1):
+    while (len(res) != 4):
         x = dut.uo_out.value.to_unsigned()
         res = res + bytes([x])
         await ClockCycles(dut.clk, 1)
@@ -74,6 +75,28 @@ async def simple_cam_test(dut):
     cocotb.log.info(' '.join(map(str, mac(W,I))))
     res = await read_res(dut)
     assert(res == mac(W,I))
-    # Wait for one clock cycle to see the output values
-    await ClockCycles(dut.clk, 100)
+    
+    await ClockCycles(dut.clk, 10)
 
+@cocotb.test()
+async def random_cam_test(dut):
+    await rst(dut)
+    await utils.rst_data_addr(dut)
+    for _ in range(0, 50): 
+        W = b''
+        I = b''
+        for _ in range(0,4):
+            W = W + bytes([random.randrange(0,10)])
+            I = I + bytes([random.randrange(0,10)])
+
+
+        # send weights 
+        await utils.write_config(dut, W, weight=True)
+        # send data
+        await utils.write_config(dut, I , weight=False)
+
+        # check result
+        cocotb.log.info(' '.join(map(str, mac(W,I))))
+        res = await read_res(dut)
+        assert(res == mac(W,I))
+    
