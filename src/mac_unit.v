@@ -32,12 +32,14 @@ reg  [W-1:0]  weight_q;
 wire [2*W-1:0] mul;
 wire           mul_sign; 
 
+wire [2*W-1:0] add_extended; 
 wire [W-1:0]   trunc_add; // truncaited addition 
-wire [W:0]     remain_add; 
+wire [W-1:0]   remain_add; 
+wire           unused_carry;
 wire           overflow, underflow; 
 
 wire [2*W:0]   debug_mul; 
-wire [2*W:0]   debug_add; 
+wire [2*W-1:0]   debug_add; 
 
 always @(posedge clk) 
 	if (step_i) data_q <= data_i;
@@ -54,18 +56,19 @@ booth_randix4_mul m_mul(
 	.res_o(mul),
 	.res_sign_o(mul_sign)
 );
-assign debug_mul = {mul_sign, mul}; 
 
 // Conforming to user expectations of having a soft max to round out
 // numbers and not let the results overflow and simply be sliced.
 // Forced the need for a costly 16b addition though.
-assign {remain_add, trunc_add } = mul +  {{W{add_q[W-1]}}, add_q};
+assign add_extended = {{W{add_q[W-1]}}, add_q};
+assign {unused_carry, remain_add, trunc_add } = mul + add_extended;
 
-assign debug_add = {remain_add, trunc_add}; 
+assign debug_mul = {mul_sign, mul}; 
+assign debug_add = {remain_add[W-1:0], trunc_add}; 
 
 // soft max 
-assign overflow  = ~remain_add[W] ? |{remain_add, trunc_add[W-1]} : 0; 
-assign underflow = remain_add[W] ? ~&{remain_add, trunc_add[W-1]} : 0; 
+assign overflow  = ~remain_add[W-1] ? |{remain_add, trunc_add[W-1]} : 0; 
+assign underflow = remain_add[W-1] ? ~&{remain_add, trunc_add[W-1]} : 0; 
 assign res_o = overflow ? MAX_DATA : underflow ? MIN_DATA : trunc_add;  
 
 assign data_o = data_q;

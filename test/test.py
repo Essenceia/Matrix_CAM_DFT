@@ -9,10 +9,11 @@ from array import array
 
 N = 2 # matrix dimention 
 
-MIN_W = -10
-MAX_W =  10
-MIN_I = -10
-MAX_I =  10
+# cover full range of i8
+MIN_W = -128
+MAX_W =  127
+MIN_I = -128
+MAX_I =  127
 
 def start_clk(dut):
     clock = Clock(dut.clk, 10, unit="us")
