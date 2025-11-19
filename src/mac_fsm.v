@@ -45,7 +45,6 @@ assign wr_weight_v_o = {NN{wr_weight_v}} & wr_weight_pos_q;
 
 /* data write logic */
 wire        wr_data_v;
-reg         wr_data_v_q;
 reg [N-1:0] wr_data_pos_q;
 reg [N-1:0] wr_data_pos_d2_q;
 reg         unused_add_q;
@@ -67,7 +66,7 @@ always @(posedge clk)
 assign wr_data_v_o = { wr_data_pos_q[0], ~wr_data_pos_q[0]};
 always @(posedge clk) 
 	if (~rst_n) last_step_q <= 1'b0;
-	else last_step_q <= wr_data_v & wr_data_pos_q == NN-1; 
+	else last_step_q <= wr_data_v & (wr_data_pos_q == 2'd3); 
 
 always @(posedge clk) 
 	if (en_q)  begin
@@ -118,8 +117,6 @@ localparam WR_1    = 3'd2;
 localparam WR_2    = 3'd3; 
 localparam WR_3    = 3'd4;
 
-wire test =rd_fsm_q == RD_3;
- 
 always @(posedge clk) begin
 	if (~rst_n | data_v_i & data_rst_addr_i) begin
 		wr_fsm_q <= WR_IDLE; 
@@ -144,6 +141,10 @@ always @(posedge clk) begin
 			WR_3: begin
 				wr_fsm_q <= WR_IDLE;
 				res_wr_q <= 2'b10;
+			end
+			default: begin 
+				wr_fsm_q <= WR_IDLE;
+				res_wr_q <= 2'b00;
 			end
 		endcase
 	end

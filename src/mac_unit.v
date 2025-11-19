@@ -31,11 +31,13 @@ reg  [W-1:0]  weight_q;
 
 wire [2*W-1:0] mul;
 wire           mul_sign; 
-wire [2*W:0]   debug_mul; 
 
 wire [W-1:0]   trunc_add; // truncaited addition 
 wire [W:0]     remain_add; 
 wire           overflow, underflow; 
+
+wire [2*W:0]   debug_mul; 
+wire [2*W:0]   debug_add; 
 
 always @(posedge clk) 
 	if (step_i) data_q <= data_i;
@@ -59,9 +61,11 @@ assign debug_mul = {mul_sign, mul};
 // Forced the need for a costly 16b addition though.
 assign {remain_add, trunc_add } = mul +  {{W{add_q[W-1]}}, add_q};
 
+assign debug_add = {remain_add, trunc_add}; 
+
 // soft max 
-assign overflow  = ~mul_sign & ~add_q[W-1] ? |{remain_add, trunc_add[W-1]} : 0; 
-assign underflow = mul_sign & add_q[W-1] ? ~&{remain_add, trunc_add[W-1]} : 0; 
+assign overflow  = ~remain_add[W] ? |{remain_add, trunc_add[W-1]} : 0; 
+assign underflow = remain_add[W] ? ~&{remain_add, trunc_add[W-1]} : 0; 
 assign res_o = overflow ? MAX_DATA : underflow ? MIN_DATA : trunc_add;  
 
 assign data_o = data_q;

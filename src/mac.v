@@ -104,11 +104,11 @@ generate
 		end
 	end
 endgenerate
-wire [W-1:0] res0, res1, res2, res3; 
-assign res0 = res_unit[0][0]; 
-assign res1 = res_unit[1][0]; 
-assign res2 = res_unit[0][N-1]; 
-assign res3 = res_unit[1][N-1];
+wire [W-1:0] debug_res0, debug_res1, debug_res2, debug_res3; 
+assign debug_res0 = res_unit[0][0]; 
+assign debug_res1 = res_unit[1][0]; 
+assign debug_res2 = res_unit[0][N-1]; 
+assign debug_res3 = res_unit[1][N-1];
 
 // capturing result for streamout
 reg [W-1:0] res_stream_q[N-1:0];
