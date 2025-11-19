@@ -93,6 +93,6 @@ assign add1 = {2'b0, add0_0_carry, add0_0}
             + {add0_1_carry, add0_1, 2'b0};
 
 assign res_o = add1;
-assign res_sign_o = data_i[7] ^ w_i[7];
+assign res_sign_o = (data_i[7] ^ w_i[7]) & |data_i[7:0] & |w_i[7:0];
  
 endmodule 

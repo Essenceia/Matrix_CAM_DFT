@@ -61,7 +61,7 @@ assign {remain_add, trunc_add } = mul +  {{W{add_q[W-1]}}, add_q};
 
 // soft max 
 assign overflow  = ~mul_sign & ~add_q[W-1] ? |remain_add : 0; 
-assign underflow = mul_sign & add_q[W-1] ? &remain_add : 0; 
+assign underflow = mul_sign & add_q[W-1] ? ~&remain_add : 0; 
 assign res_o = overflow ? MAX_DATA : underflow ? MIN_DATA : trunc_add;  
 
 assign data_o = data_q;

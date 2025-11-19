@@ -28,7 +28,7 @@ module booth_radix4_enc(
 );
 wire neg, single, shift;
 wire [8:0] neg_mask; 
-wire [7:0] single_mask; 
+wire [8:0] single_mask; 
 wire [7:0] shift_mask; 
 wire [8:0] post_shift; 
 
@@ -39,11 +39,11 @@ wire [8:0] post_shift;
 		.shift_o(shift)
 	);
 
-assign single_mask = {8{single}};
+assign single_mask = {9{single}};
 assign shift_mask = {8{shift}};
 assign neg_mask  = {9{neg}};
 
-assign post_shift = {data_i[7], data_i & single_mask} | {data_i & shift_mask, 1'b0};
+assign post_shift = {{data_i[7], data_i} & single_mask} | {data_i & shift_mask, 1'b0};
 assign res_o = post_shift ^ neg_mask; 
 assign sign_o = neg; 
 assign ext_o = res_o[8];
