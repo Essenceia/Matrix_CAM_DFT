@@ -1,26 +1,32 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Wed Nov 19 03:33:23 2025
+[*] Wed Nov 19 19:52:49 2025
 [*]
 [dumpfile] "/home/pitchu/rtl/mac_dft/test/tb.vcd"
-[dumpfile_mtime] "Wed Nov 19 03:29:47 2025"
-[dumpfile_size] 9686
+[dumpfile_mtime] "Wed Nov 19 19:50:46 2025"
+[dumpfile_size] 8541
 [savefile] "/home/pitchu/rtl/mac_dft/test/tb.gtkw"
-[timestart] 1299000000
+[timestart] 1053000000
 [size] 1910 470
 [pos] -1 -1
-*-26.534533 1822900000 320000000 354700000 365900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.534533 1162500000 320000000 354700000 365900000 1349400000 1162500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.dut.
 [treeopen] tb.dut.m_2x2_systolic_mac.
-[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.
+[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].
 [sst_width] 290
-[signals_width] 339
+[signals_width] 270
 [sst_expanded] 1
-[sst_vpaned_height] 116
+[sst_vpaned_height] 81
 @28
 tb.clk
 tb.rst_n
@@ -58,6 +64,7 @@ tb.dut.m_2x2_systolic_mac.m_fsm.wr_data_v
 @420
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.weight_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.data_q[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.mul[15:0]
 [color] 3
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.step_i
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.res_o[7:0]
@@ -67,24 +74,83 @@ tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.res_o[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.weight_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.data_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.res_o[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+@c00028
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+@28
+(0)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(1)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(2)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(3)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(4)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(5)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(6)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(7)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(8)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(9)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(10)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(11)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(12)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(13)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(14)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(15)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+(16)tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].m_unit.debug_mul[16:0]
+@1401200
+-group_end
 @200
 -0,1 (2)
-@420
-tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.weight_q[7:0]
 @22
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.data_i[7:0]
 @420
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.weight_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.data_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.res_o[7:0]
-@200
--1,1 (3)
-@420
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.data_top_i[7:0]
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.weight_q[7:0]
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.data_q[7:0]
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.mul[15:0]
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.res_o[7:0]
-@c00022
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.res_o[7:0]
+@c00420
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+@28
+(0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(9)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(10)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(11)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(12)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(13)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(14)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(15)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(16)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+@1401200
+-group_end
+@c00028
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+@28
+(0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(9)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(10)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(11)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(12)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(13)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(14)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(15)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+(16)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.debug_mul[16:0]
+@1401200
+-group_end
+@800022
 #{mul debug} tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.single_o tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.shift_o tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.neg_o (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.mul_i[2:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.mul_i[2:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.mul_i[2:0] (11)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (10)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (9)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0[11:0] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_s (8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_e (15)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (14)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (13)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (12)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (11)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (10)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (9)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.w_i[7:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0] (0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.data_i[7:0]
 @200
 -mul
@@ -101,6 +167,14 @@ tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.res_o[15:0]
 @200
 -pp0
 @28
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.mul_i[2:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.data_i[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.ext_o
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.post_shift[8:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.res_o[8:0]
+@28
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.sign_o
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_e
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_enc[8:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp0_s
@@ -112,10 +186,47 @@ tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.mul_
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.neg_o
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.shift_o
 tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.m_sel.single_o
-@200
--sel1
+@201
+-pp1/sel1
+@420
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.data_i[7:0]
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.mul_i[2:0]
+@1001200
+-group_end
+@420
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp1[10:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+@c00022
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+@28
+(0)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(1)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(2)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(3)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(4)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(5)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(6)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(7)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
+(8)tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.res_o[8:0]
 @1401200
 -group_end
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.neg_mask[8:0]
+@28
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp1_e
+@22
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp1_enc[8:0]
+@28
+tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.pp1_s
+@200
+-1,1 (3)
+@420
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.data_top_i[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.weight_q[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.data_q[7:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.mul[15:0]
+tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.res_o[7:0]
 @200
 -res
 @420
@@ -136,10 +247,10 @@ tb.dut.m_2x2_systolic_mac.m_fsm.wr_fsm_q[2:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.mac_step_q
 tb.dut.m_2x2_systolic_mac.m_fsm.rd_fsm_q[1:0]
 tb.dut.m_2x2_systolic_mac.m_fsm.res_wr_o[1:0]
-@421
+@420
 [color] 2
 tb.dut.m_2x2_systolic_mac.result_o[7:0]
-@29
+@28
 [color] 2
 tb.dut.m_2x2_systolic_mac.result_v_o
 [pattern_trace] 1
