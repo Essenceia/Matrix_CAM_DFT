@@ -27,6 +27,8 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
+  wire result_v; 
+  assign result_v = uio_out[7];
   // Replace tt_um_example with your module name:
   tt_um_essen dut (
 

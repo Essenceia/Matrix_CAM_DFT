@@ -1,6 +1,6 @@
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import ClockCycles
+from cocotb.triggers import FallingEdge, RisingEdge, ClockCycles
 
 import utils
 
@@ -41,6 +41,22 @@ def mac(W,I):
                 res[y*N+x] += I[y*N+ix]*W[ix*N+x]
     return res
 
+async def read_res(dut):
+    res = b''
+    for i in range(0,10):
+        if (dut.result_v.value == 1):
+            break
+        await ClockCycles(dut.clk, 1)
+        
+    while (dut.result_v.value == 1):
+        x = dut.uo_out.value.to_unsigned()
+        res = res + bytes([x])
+        await ClockCycles(dut.clk, 1)
+    
+    cocotb.log.info("res :")
+    cocotb.log.info(' '.join(map(str, res)))
+    return res 
+
 @cocotb.test()
 async def simple_cam_test(dut):
     await rst(dut) 
@@ -56,6 +72,8 @@ async def simple_cam_test(dut):
 
     # check result
     cocotb.log.info(' '.join(map(str, mac(W,I))))
+    res = await read_res(dut)
+    assert(res == mac(W,I))
     # Wait for one clock cycle to see the output values
     await ClockCycles(dut.clk, 100)
 

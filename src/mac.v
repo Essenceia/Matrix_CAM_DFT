@@ -31,6 +31,7 @@ logic          wr_weight_v[N-1:0][N-1:0];
 logic [N-1:0]  wr_data_v;
 reg  [W-1:0]  data_input_q[N-1:0];
 logic          mac_step; 
+logic [N-1:0]  res_rd, res_wr;
 
 mac_fsm #(.N(N), .NN(NN)) m_fsm(
 	.clk(clk),
@@ -44,7 +45,10 @@ mac_fsm #(.N(N), .NN(NN)) m_fsm(
 	.wr_weight_v_o(wr_weight_v_flat),
 	.wr_data_v_o(wr_data_v),
 	
-	.mac_step_o(mac_step)
+	.mac_step_o(mac_step),
+
+	.res_rd_o(res_rd),
+	.res_wr_o(res_wr)
 );
 generate 
 	for(x=0; x<N; x=x+1) begin: g_wr_weight_v_x
@@ -100,9 +104,27 @@ generate
 		end
 	end
 endgenerate
-// TODO get result
-assign result_v_o = 1'b1;
-assign result_o = res_unit[N-1][N-1];
+wire [W-1:0] res0, res1, res2, res3; 
+assign res0 = res_unit[0][0]; 
+assign res1 = res_unit[1][0]; 
+assign res2 = res_unit[0][N-1]; 
+assign res3 = res_unit[1][N-1];
+
+// capturing result for streamout
+reg [W-1:0] res_stream_q[N-1:0];
+
+// given the res is the critical path, we can't bypass this flop
+generate 
+	for (x=0; x<N; x=x+1) begin: g_res_capture
+		always @(posedge clk) 
+			if (res_rd[x])res_stream_q[x] <= res_unit[x][N-1];
+	end
+endgenerate
+
+
+// Result output
+assign result_v_o = |res_wr;
+assign result_o = res_wr[1] ? res_stream_q[1]: res_stream_q[0];
 
 endmodule
 

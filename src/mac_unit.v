@@ -24,14 +24,17 @@ module mac_unit #(
 	output [W-1:0] res_o // result, become the top input data for the next unit bellow
 ); 
 
-reg  [W-1:0] data_q;
+reg  [W-1:0] data_q, add_q;
 reg  [W-1:0] weight_q;
 wire [2*W-1:0] mul;
 reg          unused_add;
 
 always @(posedge clk) 
 	if (step_i) data_q <= data_i;
- 
+
+always @(posedge clk) 
+	if (step_i) add_q <= data_top_i; // critical path end 
+
 always @(posedge clk) 
 	if (wr_weight_v_i) weight_q <= weight_i;
 
@@ -42,7 +45,7 @@ booth_randix4_mul m_mul(
 );
 
 
-assign {unused_add, res_o } = mul[W-1:0] + data_top_i;
+assign {unused_add, res_o } = mul[W-1:0] + add_q;
 assign data_o = data_q;
 
 endmodule
