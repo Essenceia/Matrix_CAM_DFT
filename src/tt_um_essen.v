@@ -13,6 +13,8 @@ module tt_um_essen(
 ); 
 
 localparam BSC_CHAIN_W = 7; // bsc scan chain length 
+localparam UREG_DATA_W = 8;
+localparam UREG_ADDR_W = 2;
 
 /* IO direction */
 assign uio_oe = 8'b1100_0000; 
@@ -106,15 +108,19 @@ assign trst       = ~rst_n | ~ena; // there is no power gating, stall the design
 assign uio_out[6] = tdo;
 
 
-// input/output interface boundary scan 
-
 // JTAG 
+/* verilator lint_off UNDRIVEN */
+/* verilator lint_off UNUSED */
+wire [UREG_ADDR_W-1:0] ureg_addr;
+wire [UREG_DATA_W-1:0] ureg_data;
+/* verilator lint_on UNDRIVEN */
+/* verilator lint_on UNUSED */
 jtag #(.IR_W(3), 
 	.VERSION_NUM(0),
 	.PART_NUM(1),
 	.MANIFACTURE_ID(2),
-	.UREG_ADDR_W(2),
-	.UREG_DATA_W(8)
+	.UREG_ADDR_W(UREG_ADDR_W),
+	.UREG_DATA_W(UREG_DATA_W)
 	) m_jtag_tap (
 	.rst_n(rst_n),
 	.ena(ena), 
@@ -132,8 +138,8 @@ jtag #(.IR_W(3),
 
 	.bsc_tdo_i(bsc_tdo),
 
-	.ureg_addr_o(),
-	.ureg_data_i()
+	.ureg_addr_o(ureg_addr),
+	.ureg_data_i(ureg_data)
 );
 
 // MAC design

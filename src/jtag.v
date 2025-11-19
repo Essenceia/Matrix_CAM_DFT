@@ -5,6 +5,7 @@
  */
 
 `timescale 1ns / 1ps
+`default_nettype none
 
 module jtag #(
 	parameter IR_W = 3,
@@ -31,8 +32,8 @@ module jtag #(
 
 	input bsc_tdo_i,
 
-	output [UREG_W-1:0] ureg_addr_o,
-	input  [UREG_W-1:0] ureg_data_i	
+	output [UREG_ADDR_W-1:0] ureg_addr_o,
+	input  [UREG_DATA_W-1:0] ureg_data_i	
 );
 /* supported instruction opcodes
  * some instructions opcodes can be implementation defined, this isn't
@@ -126,16 +127,18 @@ always @(posedge tck_i) begin
 end
 
 /* USER REGISTER */
-reg [UREG_W-1:0] ureg_addr_q, ureg_data_q, ureg_tdi_q;
+reg [UREG_ADDR_W-1:0] ureg_addr_q;
+reg [UREG_W-1:0] ureg_data_q, ureg_tdi_q;
 always @(posedge tck_i) begin
 	if (fsm_q == DR_CAPTURE) begin
-		ureg_addr_q <= ureg_tdi_q;
+		ureg_addr_q <= ureg_tdi_q[UREG_ADDR_W-1:0];
 		ureg_data_q <= ureg_data_i;
 	end else if (fsm_q == DR_SHIFT) begin
 		ureg_tdi_q <= {tdi_i, ureg_tdi_q[UREG_W-2:0]};
 		ureg_data_q <= {1'b0, ureg_data_q[UREG_W-1:1]};
 	end
 end
+assign ureg_addr_o = ureg_addr_q; 
 
 /* DR */ 
 wire dr_tdo;

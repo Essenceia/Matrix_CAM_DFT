@@ -46,7 +46,6 @@ assign wr_weight_v_o = {NN{wr_weight_v}} & wr_weight_pos_q;
 /* data write logic */
 wire        wr_data_v;
 reg [N-1:0] wr_data_pos_q;
-reg [N-1:0] wr_data_pos_d2_q;
 reg         unused_add_q;
 
 assign wr_data_v = data_v_i & (data_mode_i == MODE_DATA) & ~data_rst_addr_i;

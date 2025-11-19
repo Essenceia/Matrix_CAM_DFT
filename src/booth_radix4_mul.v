@@ -89,8 +89,8 @@ assign {add0_1_carry, add0_1} = {1'b0, pp2, 1'b0,  pp1_s}
 wire [15:0] add1; 
 wire unused_add1_carry; // carry value can be pre-computed
 
-assign add1 = {2'b0, add0_0_carry, add0_0}
-            + {add0_1_carry, add0_1, 2'b0};
+assign {unused_add1_carry, add1 } = {3'b0, add0_0_carry, add0_0}
+                                  + {add0_1_carry, add0_1, 2'b0};
 
 assign res_o = add1;
 
