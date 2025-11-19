@@ -5,7 +5,8 @@ module booth_randix4_mul(
 	input [7:0] data_i, 
 	input [7:0] w_i, 
 
-	output [15:0] res_o  
+	output [15:0] res_o, 
+	output        res_sign_o 
 	);
 
 // Parital products  
@@ -86,10 +87,12 @@ assign {add0_1_carry, add0_1} = {1'b0, pp2, 1'b0,  pp1_s}
 
 // level 1
 wire [15:0] add1; 
-wire unused_add1_carry; // carry will allways be 0
+wire unused_add1_carry; // carry value can be pre-computed
 
-assign {unused_add1_carry, add1} = {2'b0, add0_0_carry, add0_0}
-                                 + {add0_1_carry, add0_1, 2'b0};
+assign add1 = {2'b0, add0_0_carry, add0_0}
+            + {add0_1_carry, add0_1, 2'b0};
 
 assign res_o = add1;
+assign res_sign_o = data_i[7] ^ w_i[7];
+ 
 endmodule 
