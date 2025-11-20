@@ -1,7 +1,7 @@
 # modified librelane base.sdc to support 2 clocks
 
 # custom env variable
-set ::env(JTAG_CLOCK_PERIOD) 500
+set ::env(JTAG_CLOCK_PERIOD) 40
 
 
 if { [info exists ::env(CLOCK_PORT)] } {
@@ -61,11 +61,7 @@ set jtag_clk_input [get_port $jtag_clock_port]
 set jtag_clk_indx [lsearch [all_inputs] $jtag_clk_input]
 set jtag_all_inputs_wo_clk [lreplace [all_inputs] $jtag_clk_indx $jtag_clk_indx ""]
 
-
 # rst
-#set rst_input [get_port resetn]
-#set rst_indx [lsearch [all_inputs] $rst_input]
-#set all_inputs_wo_clk_rst [lreplace $all_inputs_wo_clk $rst_indx $rst_indx ""]
 set all_inputs_wo_clk_rst $all_inputs_wo_clk
 
 # jtag has no trst so there is no need to define another rst path 
@@ -90,6 +86,11 @@ set_driving_cell \
     -pin [lindex [split $::env(SYNTH_CLK_DRIVING_CELL) "/"] 1] \
     $clk_input
 
+set_driving_cell \
+    -lib_cell [lindex [split $::env(SYNTH_CLK_DRIVING_CELL) "/"] 0] \
+    -pin [lindex [split $::env(SYNTH_CLK_DRIVING_CELL) "/"] 1] \
+    $jtag_clk_input
+
 set cap_load [expr $::env(OUTPUT_CAP_LOAD) / 1000.0]
 puts "\[INFO] Setting load to: $cap_load"
 set_load $cap_load [all_outputs]
@@ -110,3 +111,5 @@ if { [info exists ::env(OPENLANE_SDC_IDEAL_CLOCKS)] && $::env(OPENLANE_SDC_IDEAL
     set_propagated_clock [all_clocks]
 }
 
+
+set_clock_groups -asynchronous -group $clock_port -group $jtag_clock_port

@@ -31,8 +31,8 @@
   
   "PDK": "gf180mcuD", 
   
-  "SYNTH_AUTONAME": 1,
-  "SYNTH_KEEP": 1, 
+  "SYNTH_AUTONAME": 0,
+  "SYNTH_KEEP": 0, 
 
   "//" : "jtag clk config, setting to 500ns -> 2MHz",
   "JTAG_CLOCK_PERIOD": 500, 
