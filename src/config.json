@@ -11,6 +11,8 @@
 
   "//": "Here are some of the variables you may want to change:",
 
+  "PDK": "gf180mcuD", 
+
   "//": "PL_TARGET_DENSITY_PCT - You can increase this if Global Placement fails with error GPL-0302.",
   "//": "Users have reported that values up to 80 worked well for them.",
   "PL_TARGET_DENSITY_PCT": 60,
