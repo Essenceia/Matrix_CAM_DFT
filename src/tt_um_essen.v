@@ -57,18 +57,21 @@ assign bsc_chain[0] = tdi;
 assign bsc_tdo = bsc_chain[BSC_CHAIN_W-1];
 
 bsc #(.W(1)) m_bsc_data_v_in(
+	.tck(tck),
 	.data_i(data_v_bsc), .data_o(data_v),
 	.scan_i(bsc_chain[0]), .scan_o(bsc_chain[1]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);	
 
 bsc #(.W(1)) m_bsc_data_mode_in(
+	.tck(tck),
 	.data_i(data_mode_bsc), .data_o(data_mode),
 	.scan_i(bsc_chain[1]), .scan_o(bsc_chain[2]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_data_rst_in(
+	.tck(tck),
 	.data_i(data_rst_bsc), .data_o(data_rst),
 	.scan_i(bsc_chain[2]), .scan_o(bsc_chain[3]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
@@ -76,18 +79,21 @@ bsc #(.W(1)) m_bsc_data_rst_in(
 
 
 bsc #(.W(8)) m_bsc_data_in(
+	.tck(tck),
 	.data_i(data_bsc), .data_o(data),
 	.scan_i(bsc_chain[3]), .scan_o(bsc_chain[4]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(1)) m_bsc_result_v_out(
+	.tck(tck),
 	.data_i(result_v), .data_o(result_v_bsc),
 	.scan_i(bsc_chain[4]), .scan_o(bsc_chain[5]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)
 	);
 
 bsc #(.W(8)) m_bsc_result_out(
+	.tck(tck),
 	.data_i(result), .data_o(result_bsc),
 	.scan_i(bsc_chain[5]), .scan_o(bsc_chain[6]),
 	.shift_i(bsc_shift), .capture_i(bsc_capture), .update_i(bsc_update), .mode_i(bsc_mode)

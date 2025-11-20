@@ -14,6 +14,8 @@
 module bsc #(
 	parameter W = 1
 	)(
+	input tck,
+
 	input  [W-1:0] data_i,
 	output [W-1:0] data_o,
 
@@ -38,6 +40,8 @@ generate
 			assign chain[i] = scan_next[i-1];
 
 		bsc_inner m_inner(
+			.tck(tck),
+
 			.data_i(data_i[i]),
 			.data_o(data_o[i]),
 
@@ -57,6 +61,8 @@ assign scan_o = scan_next[W-1];
 endmodule 
 
 module bsc_inner(
+	input  tck,
+
 	input  data_i, 
 	output data_o,
 
@@ -74,11 +80,11 @@ reg  ff_1_q, ff_2_q;
 assign ff_1_next = shift_i ? scan_i: data_i;
 assign ff_2_next = ff_1_q;
 
-always @(posedge capture_i)
-	ff_1_q <= ff_1_next;
+always @(posedge tck)
+	if (capture_i) ff_1_q <= ff_1_next;
 
-always @(posedge update_i)
-	ff_2_q <= ff_2_next;
+always @(posedge tck)
+	if (update_i) ff_2_q <= ff_2_next;
 
 assign scan_o = ff_1_q; 
 assign data_o = mode_i ? ff_2_q : data_i; 
