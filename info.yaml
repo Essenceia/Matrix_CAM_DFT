@@ -31,14 +31,14 @@ project:
 # This section is for the datasheet/website. Use descriptive names (e.g., RX, TX, MOSI, SCL, SEG_A, etc.).
 pinout:
   # Inputs
-  ui[0]: "data_i"
-  ui[1]: "data_i"
-  ui[2]: "data_i"
-  ui[3]: "data_i"
-  ui[4]: "data_i"
-  ui[5]: "data_i"
-  ui[6]: "data_i"
-  ui[7]: "data_i"
+  ui[0]: "tck"
+  ui[1]: "data_i[0]"
+  ui[2]: "data_i[1]"
+  ui[3]: "data_i[2]"
+  ui[4]: "data_i[3]"
+  ui[5]: "data_i[4]"
+  ui[6]: "data_i[5]"
+  ui[7]: "data_i[6]"
 
   # Outputs
   uo[0]: "result_o"
@@ -51,10 +51,10 @@ pinout:
   uo[7]: "result_o"
 
   # Bidirectional pins
-  uio[0]: "data_valid_i"
-  uio[1]: "data_mode_i"
-  uio[2]: "data_rst_addr_i"
-  uio[3]: "tck"
+  uio[0]: "data_i[7]"
+  uio[1]: "data_valid_i"
+  uio[2]: "data_mode_i"
+  uio[3]: "data_rst_addr_i"
   uio[4]: "tdi"
   uio[5]: "tms"
   uio[6]: "tdo"

@@ -16,7 +16,7 @@ localparam BSC_CHAIN_W = 7; // bsc scan chain length
 localparam UREG_DATA_W = 8;
 localparam UREG_ADDR_W = 2;
 
-/* IO direction */
+/* IO direction, 0: input, 1: output */
 assign uio_oe = 8'b1100_0000; 
 
 /* unused IO */
@@ -46,10 +46,10 @@ wire [7:0] data;
 wire       result_v;
 wire [7:0] result;
 
-assign data_v_bsc    = uio_in[0];
-assign data_mode_bsc = uio_in[1];
-assign data_rst_bsc  = uio_in[2];
-assign data_bsc      = ui_in;
+assign data_v_bsc    = uio_in[1];
+assign data_mode_bsc = uio_in[2];
+assign data_rst_bsc  = uio_in[3];
+assign data_bsc      = {uio_in[0], ui_in[7:1]};
 assign uio_out[7]    = result_v_bsc;
 assign uo_out        = result_bsc;
 
@@ -101,7 +101,7 @@ wire tms;
 wire tdo;
 wire trst; 
 
-assign tck        = uio_in[3];
+assign tck        = ui_in[0]; // clk's can only be driven from the ui_in pins
 assign tdi        = uio_in[4];
 assign tms        = uio_in[5];
 assign trst       = ~rst_n | ~ena; // there is no power gating, stall the design if not enabled

@@ -25,14 +25,14 @@ async def invalid_data(dut, cycles):
 #
 # --- MAC ---
 #
-# valid - 0 - data transfer contains valid information
+# valid - 1 - data transfer contains valid information
 #
-# mode - 1
+# mode - 2
 # value - meaning
 #     0 - cam input data
 #     1 - weight
 #
-# address rst - 2 - rst weight and data addresses
+# address rst - 3 - rst weight and data addresses
 # 
 # --- JTAG --- 
 # tdi - 4 - input data 
@@ -51,7 +51,7 @@ def get_cmd(valid=True, mode=False, rst=False, tdi=False, tms=False):
     if tms: 
         ret |= 1 << 5
 
-    return ret
+    return ret << 1
 
 def stou(n): 
   return int.from_bytes(n.to_bytes(1, 'little', signed=True), 'little', signed=False)
@@ -75,8 +75,8 @@ async def write_config(dut, X, weight=True):
     for i in range(0,N*N):
         if (random.randrange(0,100) > 75):
             await invalid_data(dut, random.randrange(1,5)) 
-        dut.uio_in.value = get_cmd(valid=True, mode=weight)
-        dut.ui_in.value = config[i]
+        dut.ui_in.value = (config[i] << 1) & 0xFE
+        dut.uio_in.value = get_cmd(valid=True, mode=weight) | (config[i] >> 7 & 0x01)
         await ClockCycles(dut.clk,1)
     dut.uio_in.value = 0
 
