@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Fri Nov 21 17:36:17 2025
+[*] Fri Nov 21 22:15:25 2025
 [*]
 [dumpfile] "/home/pitchu/rtl/mac_dft/test/tb.vcd"
-[dumpfile_mtime] "Fri Nov 21 17:33:14 2025"
-[dumpfile_size] 5326
+[dumpfile_mtime] "Fri Nov 21 22:12:50 2025"
+[dumpfile_size] 5491
 [savefile] "/home/pitchu/rtl/mac_dft/test/tb.gtkw"
-[timestart] 5687900000
+[timestart] 12762500000
 [size] 1910 470
-[pos] -1 -1
+[pos] -1527 -1
 *-27.534533 2908300000 320000000 354700000 365900000 1349400000 1162500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.dut.
@@ -19,9 +19,9 @@
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].
 [treeopen] tb.dut.m_jtag_tap.
 [sst_width] 290
-[signals_width] 270
+[signals_width] 323
 [sst_expanded] 1
-[sst_vpaned_height] 193
+[sst_vpaned_height] 73
 @28
 tb.clk
 tb.rst_n
@@ -291,11 +291,11 @@ tb.dut.m_jtag_tap.trst_i
 tb.dut.m_jtag_tap.tck_i
 tb.dut.m_jtag_tap.tms_i
 tb.dut.m_jtag_tap.tdi_i
-@29
 tb.dut.m_jtag_tap.tdo_o
 @200
 -inner
-@28
+@29
+[color] 7
 tb.dut.m_jtag_tap.ir[2:0]
 @24
 [color] 2

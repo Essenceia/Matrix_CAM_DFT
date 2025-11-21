@@ -185,7 +185,7 @@ async def test_bypass(dut):
 
 
 def set_random_input_pin_data():
-    pin_i = bytearray(PIN_IN_N)
+    pin_i = bytearray(0)
     for i in range(0, PIN_IN_N):
         pin_i.append(random.randint(0,1))
     io_v = 0
@@ -239,12 +239,15 @@ async def test_extest(dut):
         dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=False)
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
-        tdo_buffer.append(tdo)
+        if ( i > PIN_OUT_N - 1):
+            cocotb.log.info("i %d %s", i, tdo)
+            tdo_buffer.append(tdo)
    
     # check captured bits values match inputs
-    cocotb.log.info("tdo %s", tdo_buffer)
-    cocotb.log.info("expected bsc pin i %s", bsc_pin_i)
-    assert(bsc_pin_i == tdo_buffer[BSC_LENGTH-1:BSC_LENGTH-PIN_IN_N]) 
+    tdo_buffer.reverse()
+    cocotb.log.info("tdo\n%s", tdo_buffer)
+    cocotb.log.info("expected bsc pin i\n%s", bsc_pin_i)
+    assert(bsc_pin_i == tdo_buffer) 
  
      # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
