@@ -1,26 +1,23 @@
 [*]
 [*] GTKWave Analyzer v3.3.115 (w)1999-2023 BSI
-[*] Wed Nov 19 20:28:32 2025
+[*] Fri Nov 21 00:28:58 2025
 [*]
 [dumpfile] "/home/pitchu/rtl/mac_dft/test/tb.vcd"
-[dumpfile_mtime] "Wed Nov 19 20:27:23 2025"
-[dumpfile_size] 51314
+[dumpfile_mtime] "Fri Nov 21 00:28:22 2025"
+[dumpfile_size] 4544
 [savefile] "/home/pitchu/rtl/mac_dft/test/tb.gtkw"
-[timestart] 2327700000
+[timestart] 1811000000
 [size] 1910 470
 [pos] -1 -1
-*-25.534533 2605700000 320000000 354700000 365900000 1349400000 1162500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-27.534533 2605700000 320000000 354700000 365900000 1349400000 1162500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] tb.
 [treeopen] tb.dut.
-[treeopen] tb.dut.m_2x2_systolic_mac.
-[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[0].m_unit.
-[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc0.
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[0].g_unit_y[1].m_unit.m_mul.m_enc1.
-[treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[0].
 [treeopen] tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].
+[treeopen] tb.dut.m_jtag_tap.
 [sst_width] 290
 [signals_width] 270
 [sst_expanded] 1
@@ -256,7 +253,6 @@ tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.data_q[7:0]
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.mul[15:0]
 @28
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.mul_sign
-@29
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.debug_mul[16:0]
 @420
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.add_q[7:0]
@@ -265,17 +261,9 @@ tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.overflow
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.underflow
 @420
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.trunc_add[7:0]
-@28
-tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.remain_add[8:0]
-@420
 tb.dut.m_2x2_systolic_mac.g_unit_x[1].g_unit_y[1].m_unit.res_o[7:0]
 @200
 -res
-@420
-tb.dut.m_2x2_systolic_mac.res0[7:0]
-tb.dut.m_2x2_systolic_mac.res1[7:0]
-tb.dut.m_2x2_systolic_mac.res2[7:0]
-tb.dut.m_2x2_systolic_mac.res3[7:0]
 @28
 [color] 3
 tb.dut.m_2x2_systolic_mac.res_rd[1:0]
@@ -295,5 +283,17 @@ tb.dut.m_2x2_systolic_mac.result_o[7:0]
 @28
 [color] 2
 tb.dut.m_2x2_systolic_mac.result_v_o
+@200
+-jtag
+@28
+tb.dut.m_jtag_tap.tck_i
+tb.dut.m_jtag_tap.tdi_i
+tb.dut.m_jtag_tap.tms_i
+tb.dut.m_jtag_tap.trst_i
+tb.dut.m_jtag_tap.ir[2:0]
+@25
+tb.dut.m_jtag_tap.fsm_q[3:0]
+@28
+tb.dut.m_jtag_tap.tdo_o
 [pattern_trace] 1
 [pattern_trace] 0

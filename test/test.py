@@ -162,4 +162,4 @@ async def jtag_read_idcode(dut):
     await rst(dut, start_jtag=True)
     await jtag_utils.rst_jtag_tap(dut)
     idcode = await jtag_utils.get_idcode(dut)
-    cocotb.log.info("idcode : %s", hex(idcode))
+    cocotb.log.info("idcode : %s", idcode)

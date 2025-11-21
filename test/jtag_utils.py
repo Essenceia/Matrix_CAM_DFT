@@ -83,11 +83,10 @@ async def read_dr(dut, drl):
    
     # shift dr
     for i in range(0, drl):
-        tdo = dut.uio_out.value[6]
-        ret |= int(tdo) << i
-        dut.uio_in.value = get_cmd(tms=(i == drl-1), tdi=(tdi == 1))
+        dut.uio_in.value = get_cmd(tms=(i == drl-1))
         await ClockCycles(dut.tck, 1)
-    
+        tdo = dut.uio_out.value[6]
+        ret |= int(tdo) << i 
     # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
@@ -99,7 +98,10 @@ async def read_dr(dut, drl):
     # got back to idle
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
+
+    return ret
  
 async def get_idcode(dut):
     await set_ir(dut, IDCODE, IR_L)
+    cocotb.log.info("start read dr")
     return await read_dr(dut, 32)
