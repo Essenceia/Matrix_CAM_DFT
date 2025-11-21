@@ -7,6 +7,8 @@ from cocotb.triggers import ClockCycles
 import random 
 
 IDCODE = 1
+BYPASS = 7
+
 IR_L = 3 
 
 def get_cmd(tms=False, tdi=False):
@@ -30,7 +32,7 @@ async def rst_jtag_tap(dut):
    
    
 # assumes we are starting our command from the idle position
-async def set_ir(dut, ir, irl):
+async def set_ir(dut, ir, irl=IR_L):
     # idle 
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
@@ -124,3 +126,21 @@ async def get_idcode(dut):
     v, p, m = decode_idcode(idcode)
     pretty_print_idcode(v,p,m)
     return v,p, m
+
+async def test_bypass(dut):
+    await set_ir(dut, BYPASS)
+    x = random.randint(2, 50)
+    tdi_buffer = bytearray(0)
+    tdo_buffer = bytearray(0)
+    # write tdi in and tdo
+    for _ in range(0, x):
+        tdi = random.randint(0,1)
+        tdi_buffer.append(tdi)
+        dut.uio_in.value = get_cmd(tms=False, tdi=(tdi == 1))
+        await ClockCycles(dut.tck, 1)
+        tdo = dut.uio_out.value[6]
+        tdo_buffer.append(tdo)
+    cocotb.log.info("tdi %s", tdi_buffer)
+    cocotb.log.info("tdo %s", tdo_buffer)
+    assert(tdi_buffer == tdo_buffer) 
+  
