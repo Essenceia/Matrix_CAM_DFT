@@ -6,6 +6,7 @@ import cocotb
 from cocotb.triggers import ClockCycles
 import random 
 
+EXTEST = 0
 IDCODE = 1
 BYPASS = 7
 IR_L = 3 
@@ -13,6 +14,8 @@ IR_L = 3
 # number of input and output pins
 PIN_IN_N = 11
 PIN_OUT_N = 9
+# Boundary scan chain length 
+BSC_LENGTH = PIN_IN_N + PIN_OUT_N 
 
 def get_cmd(tms=False, tdi=False):
     ret = 0
@@ -181,7 +184,7 @@ async def test_bypass(dut):
     await ClockCycles(dut.tck, 1)
 
 
-def set_random_input_pin_data(dut):
+def set_random_input_pin_data():
     pin_i = bytearray(PIN_IN_N)
     for i in range(0, PIN_IN_N):
         pin_i.append(random.randint(0,1))
@@ -190,8 +193,74 @@ def set_random_input_pin_data(dut):
     io_v |= pin_i[3] # data_i[0]
     i_v = 0 
     i_v |= pin_i[10] << 7 | pin_i[9] << 6 |pin_i[8] << 5 |pin_i[7] << 4 | pin_i[6] << 3 | pin_i[5] << 2 | pin_i[4] << 1
-    return i_v, io_v 
-    
+    return i_v, io_v, pin_i 
+
+def set_random_output_pin_data():
+    pin_o = bytearray(PIN_OUT_N)
+    for i in range(0, PIN_OUT_N):
+        pin_o.append(random.randint(0,1))
+    io_v = pin_o[0] 
+    o_v = pin_o[8] << 7 | pin_o[7] << 6 | pin_o[6] << 5 | pin_o[5] << 4 | pin_o[4] << 3 | pin_o[3] << 2 | pin_o[2] << 1 | pin_o[1] 
+    return o_v, io_v
+
 async def test_extest(dut):
+    # set ir
+    await set_ir(dut, EXTEST) 
+
+    # set random data to in
+    dut.ui_in.value = random.randint(0, 255)
+
+     # idle 
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+   
+    # dr select
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+ 
+    # capture dr - sample data on the external pins
+
     # set data on the input pins to a known state
-    ui_in , uio_in = set_random_input_pin_data(dut)
+    ui_in, uio_in, bsc_pin_i = set_random_input_pin_data()
+    dut.uio_in.value = get_cmd(tms=False) | uio_in
+    dut.ui_in.value = ui_in
+    await ClockCycles(dut.tck, 1)
+   
+    uo_out, uio_out = set_random_output_pin_data()
+
+    # shift dr, write expected output pin data over tdi
+    # capture shifted out values writen over input pins over tdo
+    tdi_buffer = bytearray(0)
+    
+    tdo_buffer = bytearray(0)
+    
+    # write tdi in and tdo
+    for i in range(0, BSC_LENGTH):
+        dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=False)
+        await ClockCycles(dut.tck, 1)
+        tdo = dut.uio_out.value[6]
+        tdo_buffer.append(tdo)
+   
+    # check captured bits values match inputs
+    cocotb.log.info("tdo %s", tdo_buffer)
+    cocotb.log.info("expected bsc pin i %s", bsc_pin_i)
+    assert(bsc_pin_i == tdo_buffer[BSC_LENGTH-1:BSC_LENGTH-PIN_IN_N]) 
+ 
+     # exit 1r
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+    
+    # update dr
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+    # got back to idle
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+    # set data on the input pins to a known state
+    ui_in, uio_in, uio_in_mask = set_random_input_pin_data(dut)
+    
+    
+     
+    
