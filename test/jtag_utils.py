@@ -7,6 +7,7 @@ from cocotb.triggers import ClockCycles
 import random 
 
 IDCODE = 1
+IR_L = 3 
 
 def get_cmd(tms=False, tdi=False):
     ret = 0
@@ -30,9 +31,6 @@ async def rst_jtag_tap(dut):
    
 # assumes we are starting our command from the idle position
 async def set_ir(dut, ir, irl):
-    dut.uio_in.value = get_cmd(tms=False)
-    await ClockCycles(dut.tck, 1)
-   
     # idle 
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
@@ -62,7 +60,46 @@ async def set_ir(dut, ir, irl):
     # update ir
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
-   
 
+    # got back to idle
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+# starting from idle, read the data register of length drl
+async def read_dr(dut, drl):
+    ret = 0
+    
+    # idle 
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+   
+    # dr select
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+ 
+    # capture dr
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+   
+    # shift dr
+    for i in range(0, drl):
+        tdo = dut.uio_out.value[6]
+        ret |= int(tdo) << i
+        dut.uio_in.value = get_cmd(tms=(i == drl-1), tdi=(tdi == 1))
+        await ClockCycles(dut.tck, 1)
+    
+    # exit 1r
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+    
+    # update dr
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+    # got back to idle
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+ 
 async def get_idcode(dut):
-    await set_ir(dut, 1, 3)
+    await set_ir(dut, IDCODE, IR_L)
+    return await read_dr(dut, 32)

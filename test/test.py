@@ -160,7 +160,6 @@ async def random_mac_reuse_weights_test(dut):
 @cocotb.test()
 async def jtag_read_idcode(dut):
     await rst(dut, start_jtag=True)
-    cocotb.log.info("rst finished")
     await jtag_utils.rst_jtag_tap(dut)
-    cocotb.log.info("tap rst finished")
-    await jtag_utils.get_idcode(dut)
+    idcode = await jtag_utils.get_idcode(dut)
+    cocotb.log.info("idcode : %s", hex(idcode))
