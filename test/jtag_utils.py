@@ -129,18 +129,52 @@ async def get_idcode(dut):
 
 async def test_bypass(dut):
     await set_ir(dut, BYPASS)
+
+    # go to shift dr mode
+    
+    # idle 
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+   
+    # dr select
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+ 
+    # capture dr
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+   
+    # shift dr
     x = random.randint(2, 50)
     tdi_buffer = bytearray(0)
     tdo_buffer = bytearray(0)
     # write tdi in and tdo
-    for _ in range(0, x):
+    for i in range(0, x):
         tdi = random.randint(0,1)
-        tdi_buffer.append(tdi)
-        dut.uio_in.value = get_cmd(tms=False, tdi=(tdi == 1))
+        if i != x-1:
+            tdi_buffer.append(tdi)
+        dut.uio_in.value = get_cmd(tms=(i == x-1), tdi=(tdi == 1))
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
-        tdo_buffer.append(tdo)
+        if i :
+            # lose first byte
+            tdo_buffer.append(tdo)
+   
+    # check bypass results, input should match output
     cocotb.log.info("tdi %s", tdi_buffer)
     cocotb.log.info("tdo %s", tdo_buffer)
     assert(tdi_buffer == tdo_buffer) 
-  
+ 
+     # exit 1r
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+    
+    # update dr
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+    # got back to idle
+    dut.uio_in.value = get_cmd(tms=False)
+    await ClockCycles(dut.tck, 1)
+
+    

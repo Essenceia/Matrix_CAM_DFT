@@ -106,7 +106,7 @@ ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
 	.tdo_o(ir_tdo),
 
 	.capture_i(fsm_q == IR_CAPTURE),
-	.shift_i(fsm_q == IR_SELECT),
+	.shift_i(fsm_q == IR_SHIFT),
 	.update_i(fsm_q == IR_UPDATE),
 
 	.inst_o(ir)

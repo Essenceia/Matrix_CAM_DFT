@@ -171,5 +171,5 @@ async def jtag_test_bypass(dut):
 async def jtag_simple_test(dut):
     await rst(dut, start_jtag=True)
     await jtag_utils.rst_jtag_tap(dut)
+    await jtag_test_bypass(dut) # jtag ir is set to idcode by default, start with bypass test to increase verification coverage
     await jtag_read_idcode(dut)
-    await jtag_test_bypass(dut)

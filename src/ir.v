@@ -6,6 +6,7 @@
  */
 
 `timescale 1ns / 1ps
+`default_nettype none
 
 module ir #(
 	parameter          W=2,// IR length
