@@ -1,9 +1,14 @@
+# Cocotb testbench for testing the MAC and JTAG functions of this ASIC design
+#
+# Julia Desmazes, 2025, human made code
+
 import cocotb
 from cocotb.clock import Clock
 from cocotb.triggers import FallingEdge, RisingEdge, ClockCycles
 
 import random 
-import utils
+import mac_utils
+import jtag_utils
 import asyncio
 from array import array 
 
@@ -20,11 +25,11 @@ def start_clk(dut):
     cocotb.start_soon(clock.start()) #runs the clock "in the background" 
 
 def start_jtag_clk(dut):
-    jtag_clk = Clock(dut.dut.tck, 100, unit="us")
+    jtag_clk = Clock(dut.tck, 100, unit="us")
     cocotb.start_soon(jtag_clk.start())
 
 # Reset sequence
-async def rst(dut, ena=1, start_jtag=0):
+async def rst(dut, ena=1, start_jtag=False):
     dut.rst_n.value = 0
     start_clk(dut)
     if start_jtag:
@@ -76,22 +81,24 @@ async def compare_res(dut, W, I):
     
     assert(res == expected) 
 
+# MAC tests 
+
 @cocotb.test()
 async def simple_mac_test(dut):
     await rst(dut) 
     W = array('b', [0, 1, 2, 3]) 
     I = array('b', [4, 5, 6, 7])
 
-    await utils.rst_data_addr(dut)
+    await mac_utils.rst_data_addr(dut)
 
     # send weights 
-    await utils.write_config(dut, W, weight=True)
+    await mac_utils.write_config(dut, W, weight=True)
 
     # res can start comming in before all the data has been finished being written 
     comp_task = cocotb.start_soon(compare_res(dut, W, I))
         
     # send data
-    write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+    write_task = cocotb.start_soon(mac_utils.write_config(dut, I , weight=False))
    
     await write_task
     await comp_task 
@@ -101,24 +108,24 @@ async def simple_mac_test(dut):
 @cocotb.test()
 async def random_mac_test(dut):
     await rst(dut)
-    await utils.rst_data_addr(dut)
+    await mac_utils.rst_data_addr(dut)
     for _ in range(0, 500): 
         W = array('b')
         I = array('b')
         for _ in range(0,4):
-            W.append(utils.biased_random(MIN_W,MAX_W))
-            I.append(utils.biased_random(MIN_I,MAX_I))
+            W.append(mac_utils.biased_random(MIN_W,MAX_W))
+            I.append(mac_utils.biased_random(MIN_I,MAX_I))
 
 
         # send weights 
-        await utils.write_config(dut, W, weight=True)
+        await mac_utils.write_config(dut, W, weight=True)
     
         # check result - results can start streaming before all the 
         # data has been written 
         comp_task = cocotb.start_soon(compare_res(dut, W, I))
         
         # send data
-        write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+        write_task = cocotb.start_soon(mac_utils.write_config(dut, I , weight=False))
    
         await write_task
         await comp_task 
@@ -126,23 +133,34 @@ async def random_mac_test(dut):
 @cocotb.test()
 async def random_mac_reuse_weights_test(dut):
     await rst(dut)
-    await utils.rst_data_addr(dut)
+    await mac_utils.rst_data_addr(dut)
     for _ in range(0, 20): 
         W = array('b')
         for _ in range(0,4):
-            W.append(utils.biased_random(MIN_W,MAX_W))
-        await utils.write_config(dut, W, weight=True)
+            W.append(mac_utils.biased_random(MIN_W,MAX_W))
+        await mac_utils.write_config(dut, W, weight=True)
 
         for _ in range(0, 50): 
             I = array('b')
             for _ in range(0,4):
-                I.append(utils.biased_random(MIN_I,MAX_I))
+                I.append(mac_utils.biased_random(MIN_I,MAX_I))
     
             # check result - results can start streaming before all the 
             # data has been written 
             comp_task = cocotb.start_soon(compare_res(dut, W, I))
             # write data
-            write_task = cocotb.start_soon(utils.write_config(dut, I , weight=False))
+            write_task = cocotb.start_soon(mac_utils.write_config(dut, I , weight=False))
    
             await write_task
             await comp_task 
+
+
+# JTAG tests
+# read out idcode
+@cocotb.test()
+async def jtag_read_idcode(dut):
+    await rst(dut, start_jtag=True)
+    cocotb.log.info("rst finished")
+    await jtag_utils.rst_jtag_tap(dut)
+    cocotb.log.info("tap rst finished")
+    await jtag_utils.get_idcode(dut)

@@ -27,8 +27,14 @@ module tb ();
   wire VGND = 1'b0;
 `endif
 
+  wire tck; 
   wire result_v; 
   assign result_v = uio_out[7];
+  assign tck = ui_in[1];
+
+  wire [7:0] i_in; 
+  assign i_in = {ui_in[7:1], tck};
+
   // Replace tt_um_example with your module name:
   tt_um_essen dut (
 
@@ -38,7 +44,7 @@ module tb ();
       .VGND(VGND),
 `endif
 
-      .ui_in  (ui_in),    // Dedicated inputs
+      .ui_in  (i_in),    // Dedicated inputs
       .uo_out (uo_out),   // Dedicated outputs
       .uio_in (uio_in),   // IOs: Input path
       .uio_out(uio_out),  // IOs: Output path
