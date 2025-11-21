@@ -157,9 +157,12 @@ async def random_mac_reuse_weights_test(dut):
 
 # JTAG tests
 # read out idcode
+
 @cocotb.test()
 async def jtag_read_idcode(dut):
     await rst(dut, start_jtag=True)
     await jtag_utils.rst_jtag_tap(dut)
-    idcode = await jtag_utils.get_idcode(dut)
-    cocotb.log.info("idcode : %s", idcode)
+    v, p, m = await jtag_utils.get_idcode(dut)
+    assert(v == 1)
+    assert(p == 0xbeef) 
+    assert(m == 0x6b)

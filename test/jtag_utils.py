@@ -100,8 +100,27 @@ async def read_dr(dut, drl):
     await ClockCycles(dut.tck, 1)
 
     return ret
- 
+
+# decode and pretty print idcode format 
+# { version 4b, part_num 16b, manifacturer_id 11b, 1'b1 }
+#
+def decode_idcode(idcode):
+    assert(idcode & 0x1)
+    idcode = idcode >> 1
+    manif = idcode & 0x7ff
+    idcode = idcode >> 11
+    part = idcode & 0xffff
+    idcode = idcode >> 16
+    v = idcode & 0xf
+    return v, part, manif
+
+def pretty_print_idcode(v, part, manif):
+    cocotb.log.info("idcode: { version %s, part num %s, manifacturer id %s}", hex(v), hex(part), hex(manif))
+
 async def get_idcode(dut):
     await set_ir(dut, IDCODE, IR_L)
     cocotb.log.info("start read dr")
-    return await read_dr(dut, 32)
+    idcode = await read_dr(dut, 32)
+    v, p, m = decode_idcode(idcode)
+    pretty_print_idcode(v,p,m)
+    return v,p, m

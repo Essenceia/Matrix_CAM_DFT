@@ -126,9 +126,9 @@ wire [UREG_DATA_W-1:0] ureg_data;
 assign ureg_data = 8'b0; 
 
 jtag #(.IR_W(3), 
-	.VERSION_NUM(0),
-	.PART_NUM(1),
-	.MANIFACTURE_ID(2),
+	.VERSION_NUM(4'h1),
+	.PART_NUM(16'hbeef),
+	.MANIFACTURE_ID(11'h6b),// <-- do you get the joke ? 
 	.UREG_ADDR_W(UREG_ADDR_W),
 	.UREG_DATA_W(UREG_DATA_W)
 	) m_jtag_tap (
