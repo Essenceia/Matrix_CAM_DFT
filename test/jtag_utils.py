@@ -8,8 +8,11 @@ import random
 
 IDCODE = 1
 BYPASS = 7
-
 IR_L = 3 
+
+# number of input and output pins
+PIN_IN_N = 11
+PIN_OUT_N = 9
 
 def get_cmd(tms=False, tdi=False):
     ret = 0
@@ -177,4 +180,18 @@ async def test_bypass(dut):
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
 
+
+def set_random_input_pin_data(dut):
+    pin_i = bytearray(PIN_IN_N)
+    for i in range(0, PIN_IN_N):
+        pin_i.append(random.randint(0,1))
+    io_v = 0
+    io_v |= (pin_i[2] << 2| pin_i[1]<< 1 | pin_i[0]) << 1
+    io_v |= pin_i[3] # data_i[0]
+    i_v = 0 
+    i_v |= pin_i[10] << 7 | pin_i[9] << 6 |pin_i[8] << 5 |pin_i[7] << 4 | pin_i[6] << 3 | pin_i[5] << 2 | pin_i[4] << 1
+    return i_v, io_v 
     
+async def test_extest(dut):
+    # set data on the input pins to a known state
+    ui_in , uio_in = set_random_input_pin_data(dut)

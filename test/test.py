@@ -156,16 +156,20 @@ async def random_mac_reuse_weights_test(dut):
 
 
 # JTAG tests
-# read out idcode
+# read out idcode 
 async def jtag_read_idcode(dut):
     v, p, m = await jtag_utils.get_idcode(dut)
     assert(v == 1)
     assert(p == 0xbeef) 
     assert(m == 0x6b)
 
-# set jtag to bypass mode
+# test bypass mode ( required by spec ) 
 async def jtag_test_bypass(dut):
     await jtag_utils.test_bypass(dut)
+
+# test extest: bounday scan :) ( required by spec ) 
+async def jtag_extest(dut):
+    await jtag_utils.test_extest(dut)
 
 @cocotb.test()
 async def jtag_simple_test(dut):
@@ -173,3 +177,4 @@ async def jtag_simple_test(dut):
     await jtag_utils.rst_jtag_tap(dut)
     await jtag_test_bypass(dut) # jtag ir is set to idcode by default, start with bypass test to increase verification coverage
     await jtag_read_idcode(dut)
+    await jtag_extest(dut)
