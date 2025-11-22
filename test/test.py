@@ -169,7 +169,11 @@ async def jtag_test_bypass(dut):
 
 # test extest: bounday scan :) ( required by spec ) 
 async def jtag_extest(dut):
-    await jtag_utils.test_extest(dut)
+    await jtag_utils.test_bsc(dut, extest=True)
+
+# test sample preload: bounday scan :) ( also required by spec ) 
+async def jtag_sample_preload(dut):
+    await jtag_utils.test_bsc(dut, extest=False)
 
 @cocotb.test()
 async def jtag_simple_test(dut):
@@ -178,3 +182,4 @@ async def jtag_simple_test(dut):
     await jtag_test_bypass(dut) # jtag ir is set to idcode by default, start with bypass test to increase verification coverage
     await jtag_read_idcode(dut)
     await jtag_extest(dut)
+    await jtag_sample_preload(dut)

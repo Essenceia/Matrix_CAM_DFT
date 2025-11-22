@@ -281,8 +281,3 @@ async def test_bsc(dut, extest=True):
     # mask out tdo
     assert(uio_out == (int(dut.uio_out.value) & 0xbf)) 
 
-async def test_extest(dut):
-    await test_bsc(dut, extest=True)
-
-async def test_sample_preload(dut):
-    await test_bsc(dut, extest=False)
