@@ -187,13 +187,15 @@ async def test_bypass(dut):
 def set_random_input_pin_data():
     pin_i = bytearray(0)
     for i in range(0, PIN_IN_N):
-        pin_i.append(random.randint(0,1))
+        x = random.randint(0,1)
+        pin_i.append(x)
     io_v = 0
     io_v |= (pin_i[2] << 2| pin_i[1]<< 1 | pin_i[0]) << 1
-    io_v |= pin_i[3] # data_i[0]
+    io_v |= pin_i[10] # data_i[7]
     i_v = 0 
-    i_v |= pin_i[10] << 7 | pin_i[9] << 6 |pin_i[8] << 5 |pin_i[7] << 4 | pin_i[6] << 3 | pin_i[5] << 2 | pin_i[4] << 1
-    return i_v, io_v, pin_i 
+    i_v |= pin_i[9] << 7 | pin_i[8] << 6 |pin_i[7] << 5 |pin_i[6] << 4 | pin_i[5] << 3 | pin_i[4] << 2 | pin_i[3] << 1
+    pin_i.reverse()
+    return i_v, io_v, pin_i
 
 def set_random_output_pin_data():
     pin_o = bytearray(PIN_OUT_N)
@@ -221,9 +223,12 @@ async def test_extest(dut):
     # capture dr - sample data on the external pins
 
     # set data on the input pins to a known state
-    ui_in, uio_in, bsc_pin_i = set_random_input_pin_data()
+    ui_in, uio_in, expected_bsc_in = set_random_input_pin_data()
     dut.uio_in.value = get_cmd(tms=False) | uio_in
     dut.ui_in.value = ui_in
+    cocotb.log.info("uio_in %s", hex(uio_in) )
+    cocotb.log.info("ui_in %s",  hex(ui_in))
+    cocotb.log.info("expected bsc in %s", expected_bsc_in)
     await ClockCycles(dut.tck, 1)
    
     uo_out, uio_out = set_random_output_pin_data()
@@ -239,15 +244,12 @@ async def test_extest(dut):
         dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=False)
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
-        if ( i > PIN_OUT_N - 1):
+        if ( i > PIN_OUT_N-1):
             cocotb.log.info("i %d %s", i, tdo)
             tdo_buffer.append(tdo)
    
     # check captured bits values match inputs
-    tdo_buffer.reverse()
-    cocotb.log.info("tdo\n%s", tdo_buffer)
-    cocotb.log.info("expected bsc pin i\n%s", bsc_pin_i)
-    assert(bsc_pin_i == tdo_buffer) 
+    assert(expected_bsc_in == tdo_buffer) 
  
      # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
@@ -262,7 +264,7 @@ async def test_extest(dut):
     await ClockCycles(dut.tck, 1)
 
     # set data on the input pins to a known state
-    ui_in, uio_in, uio_in_mask = set_random_input_pin_data(dut)
+    ui_in, uio_in, uio_in_mask = set_random_input_pin_data()
     
     
      
