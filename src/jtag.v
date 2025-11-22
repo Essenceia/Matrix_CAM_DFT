@@ -70,7 +70,7 @@ reg [3:0] fsm_q;
 
 /* fsm is reset though the RESET TAP */
 always @(posedge tck_i) begin
-	if (trst_i | ~ena) begin 
+	if (trst_i | ~ena | ~jtag_enabled_q) begin 
 		fsm_q <= RESET;
 	end else begin // block isn't going to be power gatted
 		case(fsm_q)
@@ -99,7 +99,7 @@ end
 wire [IR_W-1:0] ir; 
 wire ir_tdo;
 ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
-	.rst_tap(trst_i),
+	.rst_tap(trst_i | ~jtag_enabled_q),
 
 	.tck_i(tck_i),
 	.tdi_i(tdi_i),
@@ -140,20 +140,21 @@ always @(posedge tck_i) begin
 end
 assign ureg_addr_o = ureg_addr_q; 
 
-/* DR */ 
-wire dr_tdo;
-reg  mode_mask_q;
+/* JTAG dissabled mask */ 
+reg  jtag_enabled_q;
 always @(posedge tck_i or negedge rst_n) begin
   if (~rst_n)
-    mode_mask_q <= 1'b0;  
+    jtag_enabled_q <= 1'b0;  
   else
-    mode_mask_q <= 1'b1;
+    jtag_enabled_q <= 1'b1;
 end
 
+/* DR */ 
+wire dr_tdo;
 assign bsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
 assign bsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
 assign bsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
-assign bsc_mode_o    = mode_mask_q & ir == EXTEST;
+assign bsc_mode_o    = jtag_enabled_q & ir == EXTEST;
 
 /* TDO mux */
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
