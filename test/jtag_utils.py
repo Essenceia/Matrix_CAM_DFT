@@ -8,6 +8,8 @@ import random
 
 EXTEST = 0
 IDCODE = 1
+SAMPLE_PRELOAD = 2
+USER_REG = 3
 BYPASS = 7
 IR_L = 3 
 
@@ -206,9 +208,12 @@ def set_random_output_pin_data():
     pin_o = pin_o.ljust(BSC_LENGTH, b"\x00")
     return o_v, io_v, pin_o
 
-async def test_extest(dut):
+async def test_bsc(dut, extest=True):
     # set ir
-    await set_ir(dut, EXTEST) 
+    if (extest):
+        await set_ir(dut, EXTEST) 
+    else:    
+        await set_ir(dut, SAMPLE_PRELOAD) 
 
     # set random data to in
     dut.ui_in.value = random.randint(0, 255)
@@ -259,19 +264,25 @@ async def test_extest(dut):
     # update dr
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
-    # check output diven pins
-    cocotb.log.info("uio_out %s", hex(uio_out) )
-    cocotb.log.info("uo_out %s",  hex(uo_out))
-    assert(uo_out == dut.uo_out.value) 
-    assert(uio_out == dut.uio_out.value) 
+
+    # check output pin's are the same
+    if not(extest):
+        uio_out = dut.uio_out.value
+        uo_out = dut.uo_out.value
 
     # got back to idle
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
+    
+    # check output diven pins
+    cocotb.log.info("uio_out %s", hex(uio_out) )
+    cocotb.log.info("uo_out %s",  hex(uo_out))
+    assert(uo_out == dut.uo_out.value) 
+    # mask out tdo
+    assert(uio_out == (int(dut.uio_out.value) & 0xbf)) 
 
-    # set data on the input pins to a known state
-    ui_in, uio_in, uio_in_mask = set_random_input_pin_data()
-    
-    
-     
-    
+async def test_extest(dut):
+    await test_bsc(dut, extest=True)
+
+async def test_sample_preload(dut):
+    await test_bsc(dut, extest=False)
