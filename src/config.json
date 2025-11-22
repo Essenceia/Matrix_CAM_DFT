@@ -41,6 +41,8 @@
   "CLOCK_PORT": ["clk", "ui_in[0]"],
   "FALLBACK_SDC_FILE": "dir::project.sdc",  
 
+  "CTS_DISTANCE_BETWEEN_BUFFERS": 20,
+
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
   "//": "!!! DO NOT CHANGE ANYTHING BELOW THIS POINT !!!",
   "//": "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
