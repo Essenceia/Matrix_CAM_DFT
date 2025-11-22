@@ -42,7 +42,7 @@ module jtag #(
  * BYPASS - max (all ones)  */
 localparam [IR_W-1:0] EXTEST         = {IR_W{1'b0}};// 0 - spec defined
 localparam [IR_W-1:0] IDCODE         = {{IR_W-1{1'b0}}, 1'b1}; // 1
-localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-2{1'b0}}, 2'b1}; // 2
+localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-2{1'b0}}, 2'd2}; // 2
 localparam [IR_W-1:0] USER_REG       = {{IR_W-2{1'b0}}, 2'b1}; // 3
 localparam [IR_W-1:0] BYPASS         = {IR_W{1'b1}};         // max
 

@@ -275,9 +275,12 @@ async def test_bsc(dut, extest=True):
     await ClockCycles(dut.tck, 1)
     
     # check output diven pins
-    cocotb.log.info("uio_out %s", hex(uio_out) )
-    cocotb.log.info("uo_out %s",  hex(uo_out))
+    cocotb.log.info("uio_out %s", uio_out)
+    cocotb.log.info("uo_out %s",  uo_out)
     assert(uo_out == dut.uo_out.value) 
-    # mask out tdo
-    assert(uio_out == (int(dut.uio_out.value) & 0xbf)) 
+    # mask out tdo, for sample preload values can be X
+    if (extest):
+        assert(uio_out == (int(dut.uio_out.value) & 0xbf)) 
+    else :
+        assert(uio_out[7] == dut.uio_out.value[7]) 
 
