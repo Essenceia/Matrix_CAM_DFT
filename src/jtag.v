@@ -153,7 +153,7 @@ end
 assign bsc_capture_o = (fsm_q == DR_SHIFT | fsm_q == DR_CAPTURE ) & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
 assign bsc_shift_o   = fsm_q == DR_SHIFT   & (ir == EXTEST | ir == SAMPLE_PRELOAD);
 assign bsc_update_o  = fsm_q == DR_UPDATE  & (ir == EXTEST | ir == SAMPLE_PRELOAD); 
-assign bsc_mode_o    = mode_mask_q & fsm_q == DR_UPDATE  & ir == EXTEST;
+assign bsc_mode_o    = mode_mask_q & ir == EXTEST;
 
 /* TDO mux */
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
