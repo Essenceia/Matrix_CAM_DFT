@@ -12,13 +12,16 @@ module mac_unit #(
 	)(
 	input clk, 
 
-	input         step_i, 
+	input          step_i, 
 	
-	input [W-1:0] data_i, //right side input data
-	input [W-1:0] data_top_i, // top input data
+	input [W-1:0]  data_i, //right side input data
+	input [W-1:0]  data_top_i, // top input data
 
-	input         wr_weight_v_i,	
-	input [W-1:0] weight_i, 
+	input          wr_weight_v_i,	
+	input [W-1:0]  weight_i, 
+
+	input  [1:0]   jtag_ureg_addr_i, 
+	output logic [W-1:0] jtag_ureg_data_o, 
 
 	output [W-1:0] data_o, // left side output data, will become the right side input data of the next unit leftwards
 	output [W-1:0] res_o // result, become the top input data for the next unit bellow
@@ -33,13 +36,13 @@ wire [2*W-1:0] mul;
 wire           mul_sign; 
 
 wire [2*W-1:0] add_extended; 
-wire [W-1:0]   trunc_add; // truncaited addition 
+wire [W-1:0]   trunc_add; // truncated addition 
 wire [W-1:0]   remain_add; 
 wire           unused_carry;
 wire           overflow, underflow; 
 
 wire [2*W:0]   debug_mul; 
-wire [2*W-1:0]   debug_add; 
+wire [2*W-1:0] debug_add; 
 
 always @(posedge clk) 
 	if (step_i) data_q <= data_i;
@@ -73,4 +76,13 @@ assign res_o = overflow ? MAX_DATA : underflow ? MIN_DATA : trunc_add;
 
 assign data_o = data_q;
 
+// jtag user register interface, expected to be used when mac clock is stalled
+always @(*) begin
+	case(jtag_ureg_addr_i) 
+		2'b00: jtag_ureg_data_o = weight_q; 
+		2'b01: jtag_ureg_data_o = data_q; 
+		2'b10: jtag_ureg_data_o = add_q; 
+		2'b11: jtag_ureg_data_o = remain_add;
+	endcase 
+end
 endmodule

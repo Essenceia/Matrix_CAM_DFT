@@ -12,7 +12,7 @@ module jtag #(
 	parameter [3:0]  VERSION_NUM = 4'he,
 	parameter [15:0] PART_NUM = 16'hbeef,
 	parameter [10:0] MANIFACTURE_ID = 11'hff,
-	parameter UREG_ADDR_W = 2, // user register address size
+	parameter UREG_ADDR_W = 4, // user register address size
 	parameter UREG_DATA_W = 8, // user register size
 	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
@@ -43,7 +43,9 @@ module jtag #(
 localparam [IR_W-1:0] EXTEST         = {IR_W{1'b0}};// 0 - spec defined
 localparam [IR_W-1:0] IDCODE         = {{IR_W-1{1'b0}}, 1'b1}; // 1
 localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-2{1'b0}}, 2'd2}; // 2
+/* verilator lint_off UNUSEDPARAM */
 localparam [IR_W-1:0] USER_REG       = {{IR_W-2{1'b0}}, 2'b1}; // 3
+/* verilator lint_on UNUSEDPARAM */
 localparam [IR_W-1:0] BYPASS         = {IR_W{1'b1}};         // max
 
 /* part identifier, returned on IDCODE */
@@ -127,14 +129,23 @@ always @(posedge tck_i) begin
 end
 
 /* USER REGISTER */
-reg [UREG_ADDR_W-1:0] ureg_addr_q;
+reg [UREG_ADDR_W-1:0]        ureg_addr_q;
+reg [UREG_W-UREG_ADDR_W-1:0] unused_ureg_addr_q;
 reg [UREG_W-1:0] ureg_data_q, ureg_tdi_q;
+
+// addr
+always @(posedge tck_i) begin
+	if (fsm_q == DR_UPDATE) begin
+		{ unused_ureg_addr_q , ureg_addr_q } <= ureg_tdi_q;
+	end else if (fsm_q == DR_SHIFT) begin
+		ureg_tdi_q  <= {tdi_i, ureg_tdi_q[UREG_W-2:0]};
+	end
+end
+// data
 always @(posedge tck_i) begin
 	if (fsm_q == DR_CAPTURE) begin
-		ureg_addr_q <= ureg_tdi_q[UREG_ADDR_W-1:0];
 		ureg_data_q <= ureg_data_i;
 	end else if (fsm_q == DR_SHIFT) begin
-		ureg_tdi_q <= {tdi_i, ureg_tdi_q[UREG_W-2:0]};
 		ureg_data_q <= {1'b0, ureg_data_q[UREG_W-1:1]};
 	end
 end

@@ -14,7 +14,7 @@ module tt_um_essen(
 
 localparam BSC_CHAIN_W = 7; // bsc scan chain length 
 localparam UREG_DATA_W = 8;
-localparam UREG_ADDR_W = 2;
+localparam UREG_ADDR_W = 4;
 
 /* IO direction, 0: input, 1: output */
 assign uio_oe = 8'b1100_0000; 
@@ -122,9 +122,6 @@ wire [UREG_DATA_W-1:0] ureg_data;
 /* verilator lint_on UNDRIVEN */
 /* verilator lint_on UNUSED */
 
-// TODO connected properly 
-assign ureg_data = 8'b0; 
-
 jtag #(.IR_W(3), 
 	.VERSION_NUM(4'h1),
 	.PART_NUM(16'hbeef),
@@ -162,6 +159,9 @@ mac #(.W(8), .N(2)) m_2x2_systolic_mac(
 	.data_mode_i(data_mode),
 	.data_rst_addr_i(data_rst),
 	.data_i(data),
+
+	.jtag_ureg_addr_i(ureg_addr),
+	.jtag_ureg_data_o(ureg_data),
 
 	.result_v_o(result_v),
 	.result_o(result)

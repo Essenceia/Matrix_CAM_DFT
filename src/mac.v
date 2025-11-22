@@ -8,18 +8,22 @@
 
 module mac #(
 	parameter W = 8, // data and weight width
-	parameter N = 2 // matrix dimention
+	parameter N = 2, // matrix dimention
+	parameter UREG_ADDR = 4 
 )(
 	input clk, 
 	input rst_n,
 	input ena,
 	
-	input data_v_i,
-	input data_mode_i,
-	input data_rst_addr_i,
+	input         data_v_i,
+	input         data_mode_i,
+	input         data_rst_addr_i,
 	input [W-1:0] data_i, 
 
-	output result_v_o, 
+	input  [UREG_ADDR-1:0] jtag_ureg_addr_i, 
+	output [W-1:0]         jtag_ureg_data_o,
+
+	output         result_v_o, 
 	output [W-1:0] result_o
 );
 localparam NN = N*N;
@@ -29,7 +33,7 @@ genvar x,y;
 logic [NN-1:0] wr_weight_v_flat; // limited support for multidimentional array in the simulator 
 logic          wr_weight_v[N-1:0][N-1:0];
 logic [N-1:0]  wr_data_v;
-reg  [W-1:0]  data_input_q[N-1:0];
+reg   [W-1:0]  data_input_q[N-1:0];
 logic          mac_step; 
 logic [N-1:0]  res_rd, res_wr;
 
@@ -69,6 +73,8 @@ logic [W-1:0] data_flow_right[N-1:0][N-1:0];
 logic [W-1:0] data_top_unit[N-1:0][N-1:0];
 logic [W-1:0] res_unit[N-1:0][N-1:0];
 
+logic [W-1:0] jtag_ureg_data[NN-1:0];
+
 generate 
 	for(y=0; y<N; y=y+1) begin: g_data_unit
 		assign data_unit[0][y] = data_input_q[y];
@@ -98,6 +104,9 @@ generate
 				.wr_weight_v_i(wr_weight_v[x][y]),	
 				.weight_i(data_i),
 
+				.jtag_ureg_addr_i(jtag_ureg_addr_i[1:0]),
+				.jtag_ureg_data_o(jtag_ureg_data[y*N+x]),
+
 				.data_o(data_flow_right[x][y]),
 				.res_o(res_unit[x][y])
 			);		
@@ -126,5 +135,8 @@ endgenerate
 assign result_v_o = |res_wr;
 assign result_o = res_wr[1] ? res_stream_q[1]: res_stream_q[0];
 
+
+// JTAG user register access
+assign jtag_ureg_data_o = jtag_ureg_data[jtag_ureg_addr_i[3:2]]; 
 endmodule
 
