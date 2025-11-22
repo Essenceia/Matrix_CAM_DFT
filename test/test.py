@@ -206,18 +206,25 @@ async def jtag_user_reg_test(dut):
     await rst(dut, start_jtag=True)
     await jtag_utils.rst_jtag_tap(dut)
 
-    #W = array('b')
-    #I = array('b')
-    #for _ in range(0,4):
-    #    W.append(mac_utils.biased_random(MIN_W,MAX_W))
-    #    I.append(mac_utils.biased_random(MIN_I,MAX_I))
-    W = array('b', [0, 1, 2, 3]) 
-    I = array('b', [4, 5, 6, 7])
-    # send weights 
-    await mac_utils.write_config(dut, W, weight=True)
-    
-    _ = await jtag_utils.scan_user_reg(dut, 0 , 0, True)
-    read_reg = await jtag_utils.scan_user_reg(dut, 1 , 0, False)
-    cocotb.log.info("read reg %s / %s", read_reg, W[0])
+    for _ in range(0, 20):
+        W = array('b')
+        I = array('b')
+        for _ in range(0,4):
+            W.append(mac_utils.biased_random(MIN_W,MAX_W))
+            I.append(mac_utils.biased_random(MIN_I,MAX_I))
 
-    assert(read_reg == W[0])
+        # send weights 
+        await mac_utils.write_config(dut, W, weight=True)
+       
+        for _ in range(0, 10): 
+            first = True
+            unit_next = random.randint(0,3)
+             
+            read_reg = await jtag_utils.scan_user_reg(dut, unit_next , 0, first)
+            if not(first):
+                cocotb.log.debug("read reg %s / %s", read_reg, W[0])
+                assert(read_reg == W[unit])
+
+            unit = unit_next
+            first = False
+

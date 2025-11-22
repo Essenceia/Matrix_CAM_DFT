@@ -81,7 +81,7 @@ async def write_config(dut, X, weight=True):
         dut.ui_in.value = (config[i] << 1) & 0xFE
         uio_in = get_cmd(valid=True, mode=weight) | (config[i] >> 7 & 0x01)
         dut.uio_in.value = uio_in
-        cocotb.log.info("write config %d:%s %s", i, config[i], uio_in)
+        cocotb.log.debug("write config %d:%s %s", i, config[i], uio_in)
         await ClockCycles(dut.clk,1)
     dut.uio_in.value = 0
 
