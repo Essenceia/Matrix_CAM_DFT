@@ -198,12 +198,13 @@ def set_random_input_pin_data():
     return i_v, io_v, pin_i
 
 def set_random_output_pin_data():
-    pin_o = bytearray(PIN_OUT_N)
+    pin_o = bytearray(0)
     for i in range(0, PIN_OUT_N):
         pin_o.append(random.randint(0,1))
-    io_v = pin_o[0] 
-    o_v = pin_o[8] << 7 | pin_o[7] << 6 | pin_o[6] << 5 | pin_o[5] << 4 | pin_o[4] << 3 | pin_o[3] << 2 | pin_o[2] << 1 | pin_o[1] 
-    return o_v, io_v
+    io_v = pin_o[8] << 7 
+    o_v = pin_o[0] << 7 | pin_o[1] << 6 | pin_o[2] << 5 | pin_o[3] << 4 | pin_o[4] << 3 | pin_o[5] << 2 | pin_o[6] << 1 | pin_o[7]  
+    pin_o = pin_o.ljust(BSC_LENGTH, b"\x00")
+    return o_v, io_v, pin_o
 
 async def test_extest(dut):
     # set ir
@@ -226,30 +227,30 @@ async def test_extest(dut):
     ui_in, uio_in, expected_bsc_in = set_random_input_pin_data()
     dut.uio_in.value = get_cmd(tms=False) | uio_in
     dut.ui_in.value = ui_in
-    cocotb.log.info("uio_in %s", hex(uio_in) )
-    cocotb.log.info("ui_in %s",  hex(ui_in))
-    cocotb.log.info("expected bsc in %s", expected_bsc_in)
+    cocotb.log.debug("uio_in %s", hex(uio_in) )
+    cocotb.log.debug("ui_in %s",  hex(ui_in))
+    cocotb.log.debug("expected bsc in %s", expected_bsc_in)
     await ClockCycles(dut.tck, 1)
    
-    uo_out, uio_out = set_random_output_pin_data()
+    uo_out, uio_out, tdi_buffer = set_random_output_pin_data()
+    cocotb.log.info("tdi buffer %s %d %d", tdi_buffer, len(tdi_buffer), tdi_buffer[8])
 
     # shift dr, write expected output pin data over tdi
     # capture shifted out values writen over input pins over tdo
-    tdi_buffer = bytearray(0)
-    
     tdo_buffer = bytearray(0)
     
     # write tdi in and tdo
     for i in range(0, BSC_LENGTH):
-        dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=False)
+        dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=(tdi_buffer[i] == 1))
+        cocotb.log.info("i %d %s", i, tdi_buffer[i])
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
         if ( i > PIN_OUT_N-1):
-            cocotb.log.info("i %d %s", i, tdo)
+            cocotb.log.debug("i %d %s", i, tdo)
             tdo_buffer.append(tdo)
    
     # check captured bits values match inputs
-    assert(expected_bsc_in == tdo_buffer) 
+    assert(expected_bsc_in == tdo_buffer)
  
      # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
@@ -258,6 +259,11 @@ async def test_extest(dut):
     # update dr
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
+    # check output diven pins
+    cocotb.log.info("uio_out %s", hex(uio_out) )
+    cocotb.log.info("uo_out %s",  hex(uo_out))
+    assert(uo_out == dut.uo_out.value) 
+    assert(uio_out == dut.uio_out.value) 
 
     # got back to idle
     dut.uio_in.value = get_cmd(tms=False)
