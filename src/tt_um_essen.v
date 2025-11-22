@@ -115,12 +115,8 @@ assign uio_out[6] = tdo;
 
 
 // JTAG 
-/* verilator lint_off UNDRIVEN */
-/* verilator lint_off UNUSED */
 wire [UREG_ADDR_W-1:0] ureg_addr;
 wire [UREG_DATA_W-1:0] ureg_data;
-/* verilator lint_on UNDRIVEN */
-/* verilator lint_on UNUSED */
 
 jtag #(.IR_W(3), 
 	.VERSION_NUM(4'h1),

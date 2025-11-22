@@ -25,7 +25,7 @@ def start_clk(dut):
     cocotb.start_soon(clock.start()) #runs the clock "in the background" 
 
 def start_jtag_clk(dut):
-    jtag_clk = Clock(dut.tck, 100, unit="us")
+    jtag_clk = Clock(dut.tck, 77, unit="us")
     cocotb.start_soon(jtag_clk.start())
 
 # Reset sequence
@@ -199,3 +199,25 @@ async def jtag_random_test(dut):
                 await jtag_extest(dut)
             case 3:
                 await jtag_sample_preload(dut)
+
+
+@cocotb.test()
+async def jtag_user_reg_test(dut):
+    await rst(dut, start_jtag=True)
+    await jtag_utils.rst_jtag_tap(dut)
+
+    #W = array('b')
+    #I = array('b')
+    #for _ in range(0,4):
+    #    W.append(mac_utils.biased_random(MIN_W,MAX_W))
+    #    I.append(mac_utils.biased_random(MIN_I,MAX_I))
+    W = array('b', [0, 1, 2, 3]) 
+    I = array('b', [4, 5, 6, 7])
+    # send weights 
+    await mac_utils.write_config(dut, W, weight=True)
+    
+    _ = await jtag_utils.scan_user_reg(dut, 0 , 0, True)
+    read_reg = await jtag_utils.scan_user_reg(dut, 1 , 0, False)
+    cocotb.log.info("read reg %s / %s", read_reg, W[0])
+
+    assert(read_reg == W[0])

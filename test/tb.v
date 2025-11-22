@@ -36,7 +36,7 @@ module tb ();
   assign i_in = {ui_in[7:1], tck};
 
   // Replace tt_um_example with your module name:
-  tt_um_essen dut (
+  tt_um_essen m_dut (
 
       // Include power ports for the Gate Level test:
 `ifdef GL_TEST

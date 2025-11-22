@@ -19,6 +19,8 @@ PIN_OUT_N = 9
 # Boundary scan chain length 
 BSC_LENGTH = PIN_IN_N + PIN_OUT_N 
 
+USER_REG_W = 8
+
 def get_cmd(tms=False, tdi=False):
     ret = 0
     if (tms):
@@ -76,9 +78,12 @@ async def set_ir(dut, ir, irl=IR_L):
     await ClockCycles(dut.tck, 1)
 
 # starting from idle, read the data register of length drl
-async def read_dr(dut, drl):
+async def read_dr(dut, drl, tdi_buffer=bytearray(0), bypass_read=False):
     ret = 0
-    
+   
+    if (len(tdi_buffer) == 0):
+        tdi_buffer = bytearray(drl)
+
     # idle 
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
@@ -93,10 +98,11 @@ async def read_dr(dut, drl):
    
     # shift dr
     for i in range(0, drl):
-        dut.uio_in.value = get_cmd(tms=(i == drl-1))
+        dut.uio_in.value = get_cmd(tms=(i == drl-1), tdi=(tdi_buffer[i] == 1))
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
-        ret |= int(tdo) << i 
+        if not(bypass_read):
+            ret |= int(tdo) << i 
     # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
@@ -216,7 +222,9 @@ async def test_bsc(dut, extest=True):
         await set_ir(dut, SAMPLE_PRELOAD) 
 
     # set random data to in
-    dut.ui_in.value = random.randint(0, 255)
+    tck = dut.ui_in.value[0]
+    dut.ui_in.value = random.randint(0, 255) 
+    dut.ui_in.value[0] = tck
 
      # idle 
     dut.uio_in.value = get_cmd(tms=True)
@@ -231,7 +239,9 @@ async def test_bsc(dut, extest=True):
     # set data on the input pins to a known state
     ui_in, uio_in, expected_bsc_in = set_random_input_pin_data()
     dut.uio_in.value = get_cmd(tms=False) | uio_in
+    tck = dut.ui_in.value[0]
     dut.ui_in.value = ui_in
+    dut.ui_in.value[0] = tck
     cocotb.log.debug("uio_in %s", hex(uio_in) )
     cocotb.log.debug("ui_in %s",  hex(ui_in))
     cocotb.log.debug("expected bsc in %s", expected_bsc_in)
@@ -284,3 +294,21 @@ async def test_bsc(dut, extest=True):
     else :
         assert(uio_out[7] == dut.uio_out.value[7]) 
 
+
+async def scan_user_reg(dut, unit_addr, reg_addr, first_user_reg_read=False):
+    if first_user_reg_read:
+        await set_ir(dut, USER_REG)
+    
+    assert(unit_addr >= 0 and unit_addr <= 3)
+    assert(reg_addr >= 0 and reg_addr <= 3)
+    addr = unit_addr << 2 | reg_addr
+    tdi_buffer = bytearray(USER_REG_W)
+    for x in range(0, USER_REG_W):
+        tdi_buffer[x] |= addr >> x & 0x1
+    assert(len(tdi_buffer) == USER_REG_W)
+    
+    user_reg =  await read_dr(dut, USER_REG_W, tdi_buffer, first_user_reg_read)
+    
+    return user_reg
+     
+     

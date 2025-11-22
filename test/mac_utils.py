@@ -69,7 +69,6 @@ def stou(n):
 # array. Since weights have better temporal locality, the tradeoff was
 # made in favor of the weights. 
 async def write_config(dut, X, weight=True):
-    cocotb.log.info("write config : %s", X) 
     assert(len(X) == N*N) 
     config = bytearray(0)
     for x in X: 
@@ -80,10 +79,11 @@ async def write_config(dut, X, weight=True):
         if (random.randrange(0,100) > 75):
             await invalid_data(dut, random.randrange(1,5)) 
         dut.ui_in.value = (config[i] << 1) & 0xFE
-        dut.uio_in.value = get_cmd(valid=True, mode=weight) | (config[i] >> 7 & 0x01)
+        uio_in = get_cmd(valid=True, mode=weight) | (config[i] >> 7 & 0x01)
+        dut.uio_in.value = uio_in
+        cocotb.log.info("write config %d:%s %s", i, config[i], uio_in)
         await ClockCycles(dut.clk,1)
     dut.uio_in.value = 0
-    cocotb.log.info("end write config") 
 
 async def rst_data_addr(dut):
     dut.uio_in.value = get_cmd(valid=True, mode=False, rst=True)
