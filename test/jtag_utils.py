@@ -238,7 +238,7 @@ async def test_bsc(dut, extest=True):
     await ClockCycles(dut.tck, 1)
    
     uo_out, uio_out, tdi_buffer = set_random_output_pin_data()
-    cocotb.log.info("tdi buffer %s %d %d", tdi_buffer, len(tdi_buffer), tdi_buffer[8])
+    cocotb.log.debug("tdi buffer %s %d %d", tdi_buffer, len(tdi_buffer), tdi_buffer[8])
 
     # shift dr, write expected output pin data over tdi
     # capture shifted out values writen over input pins over tdo
@@ -247,7 +247,7 @@ async def test_bsc(dut, extest=True):
     # write tdi in and tdo
     for i in range(0, BSC_LENGTH):
         dut.uio_in.value = get_cmd(tms=(i == BSC_LENGTH-1), tdi=(tdi_buffer[i] == 1))
-        cocotb.log.info("i %d %s", i, tdi_buffer[i])
+        cocotb.log.debug("i %d %s", i, tdi_buffer[i])
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
         if ( i > PIN_OUT_N-1):
@@ -275,8 +275,8 @@ async def test_bsc(dut, extest=True):
     await ClockCycles(dut.tck, 1)
     
     # check output diven pins
-    cocotb.log.info("uio_out %s", uio_out)
-    cocotb.log.info("uo_out %s",  uo_out)
+    cocotb.log.debug("uio_out %s", uio_out)
+    cocotb.log.debug("uo_out %s",  uo_out)
     assert(uo_out == dut.uo_out.value) 
     # mask out tdo, for sample preload values can be X
     if (extest):

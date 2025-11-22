@@ -183,3 +183,19 @@ async def jtag_simple_test(dut):
     await jtag_read_idcode(dut)
     await jtag_extest(dut)
     await jtag_sample_preload(dut)
+
+@cocotb.test()
+async def jtag_random_test(dut):
+    await rst(dut, start_jtag=True)
+    await jtag_utils.rst_jtag_tap(dut)
+    for _ in range(0, 100):
+        ir = random.randint(0,3)
+        match ir: 
+            case 0:
+                await jtag_test_bypass(dut) # jtag ir is set to idcode by default, start with bypass test to increase verification coverage
+            case 1:
+                await jtag_read_idcode(dut)
+            case 2:
+                await jtag_extest(dut)
+            case 3:
+                await jtag_sample_preload(dut)
