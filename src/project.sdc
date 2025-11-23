@@ -1,7 +1,7 @@
 # modified librelane base.sdc to support 2 clocks
 
 # custom env variable
-set ::env(JTAG_CLOCK_PERIOD) 40
+set ::env(JTAG_CLOCK_PERIOD) 500
 
 
 if { [info exists ::env(CLOCK_PORT)] } {
