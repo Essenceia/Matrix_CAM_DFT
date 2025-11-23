@@ -12,17 +12,17 @@ module ir #(
 	parameter          W=2,// IR length
 	parameter [W-1:0] RESET_OPCODE = 2'd0// can be IDCODE of BYPASS according to spec
     )(
-	input  rst_tap,
+	input wire  rst_tap,
 
-	input  tck_i, 
-	input  tdi_i,
-	output tdo_o,
+	input wire  tck_i, 
+	input wire  tdi_i,
+	output wire tdo_o,
 	
-	input  capture_i,
-	input  shift_i,
-	input  update_i,
+	input wire  capture_i,
+	input wire  shift_i,
+	input wire  update_i,
 
-	output [W-1:0] inst_o	
+	output wire [W-1:0] inst_o	
 );
 reg [W-1:0] shift_q;//shift register
 reg [W-1:0] hold_q; //hold register

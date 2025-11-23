@@ -12,21 +12,21 @@ module mac_fsm #(
 	parameter N = 2,
 	parameter NN = N*N
 )(
-	input clk, 
-	input rst_n, 
-	input ena,
+	input wire clk, 
+	input wire rst_n, 
+	input wire ena,
 
-	input data_v_i, 
-	input data_mode_i, 
-	input data_rst_addr_i,
+	input wire data_v_i, 
+	input wire data_mode_i, 
+	input wire data_rst_addr_i,
 
-	output [NN-1:0] wr_weight_v_o,
-	output [N-1:0]  wr_data_v_o,
+	output wire [NN-1:0] wr_weight_v_o,
+	output wire [N-1:0]  wr_data_v_o,
 
-	output mac_step_o, // cam step through 
+	output wire mac_step_o, // cam step through 
 
-	output [N-1:0] res_rd_o,
-	output [N-1:0] res_wr_o // output streaming
+	output wire [N-1:0] res_rd_o,
+	output wire [N-1:0] res_wr_o // output streaming
 
 );
 localparam MODE_DATA   = 1'b0;

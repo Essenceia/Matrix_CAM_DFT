@@ -16,24 +16,24 @@ module jtag #(
 	parameter UREG_DATA_W = 8, // user register size
 	parameter UREG_W = (UREG_ADDR_W >= UREG_DATA_W)? UREG_ADDR_W: UREG_DATA_W
 	)(
-	input  rst_n,
-	input  ena, 
+	input wire  rst_n,
+	input wire  ena, 
 
-	input  tck_i, 
-	input  tms_i, 
-	input  tdi_i,
-	input  trst_i, // optional, adding to guaranty FSM is in reset to help reduce power 
-	output tdo_o,
+	input wire  tck_i, 
+	input wire  tms_i, 
+	input wire  tdi_i,
+	input wire  trst_i, // optional, adding to guaranty FSM is in reset to help reduce power 
+	output wire tdo_o,
 
-	output bsc_shift_o,
-	output bsc_capture_o,
-	output bsc_update_o,
-	output bsc_mode_o,
+	output wire bsc_shift_o,
+	output wire bsc_capture_o,
+	output wire bsc_update_o,
+	output wire bsc_mode_o,
 
-	input bsc_tdo_i,
+	input wire bsc_tdo_i,
 
-	output [UREG_ADDR_W-1:0] ureg_addr_o,
-	input  [UREG_DATA_W-1:0] ureg_data_i	
+	output wire [UREG_ADDR_W-1:0] ureg_addr_o,
+	input wire  [UREG_DATA_W-1:0] ureg_data_i	
 );
 /* supported instruction opcodes
  * some instructions opcodes can be implementation defined, this isn't

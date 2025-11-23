@@ -2,11 +2,11 @@
 `default_nettype none
 
 module booth_radix4_enc_sel(
-	input [2:0] mul_i, // multiplier term
+	input wire [2:0] mul_i, // multiplier term
 
-	output neg_o,
-	output single_o, 
-	output shift_o
+	output wire neg_o,
+	output wire single_o, 
+	output wire shift_o
 );
 
 // assuming I can do an as good job as the synth simulifying this 
@@ -19,12 +19,12 @@ assign neg_o = mul_i[2];
 endmodule
 
 module booth_radix4_enc(
-	input [2:0] mul_i, // multiplier term
-	input [7:0] data_i,
+	input wire [2:0] mul_i, // multiplier term
+	input wire [7:0] data_i,
 
-	output [8:0] res_o,
-	output       ext_o, // multiplicat sign extension bit
-	output       sign_o
+	output wire [8:0] res_o,
+	output wire       ext_o, // multiplicat sign extension bit
+	output wire       sign_o
 );
 wire neg, single, shift;
 wire [8:0] neg_mask; 

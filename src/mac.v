@@ -11,20 +11,20 @@ module mac #(
 	parameter N = 2, // matrix dimention
 	parameter UREG_ADDR = 4 
 )(
-	input clk, 
-	input rst_n,
-	input ena,
+	input wire clk, 
+	input wire rst_n,
+	input wire ena,
 	
-	input         data_v_i,
-	input         data_mode_i,
-	input         data_rst_addr_i,
-	input [W-1:0] data_i, 
+	input wire         data_v_i,
+	input wire         data_mode_i,
+	input wire         data_rst_addr_i,
+	input wire [W-1:0] data_i, 
 
-	input  [UREG_ADDR-1:0] jtag_ureg_addr_i, 
-	output [W-1:0]         jtag_ureg_data_o,
+	input wire  [UREG_ADDR-1:0] jtag_ureg_addr_i, 
+	output wire [W-1:0]         jtag_ureg_data_o,
 
-	output         result_v_o, 
-	output [W-1:0] result_o
+	output wire         result_v_o, 
+	output wire [W-1:0] result_o
 );
 localparam NN = N*N;
 genvar x,y; 
