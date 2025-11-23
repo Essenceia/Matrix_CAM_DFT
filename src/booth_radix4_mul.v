@@ -2,11 +2,11 @@
 `default_nettype none
 
 module booth_randix4_mul(
-	input [7:0] data_i, 
-	input [7:0] w_i, 
+	input wire [7:0] data_i, 
+	input wire [7:0] w_i, 
 
-	output [15:0] res_o, 
-	output        res_sign_o 
+	output wire [15:0] res_o, 
+	output wire        res_sign_o 
 	);
 
 // Parital products  

@@ -14,18 +14,18 @@
 module bsc #(
 	parameter W = 1
 	)(
-	input tck,
+	input wire tck,
 
-	input  [W-1:0] data_i,
-	output [W-1:0] data_o,
+	input wire  [W-1:0] data_i,
+	output wire [W-1:0] data_o,
 
-	input  scan_i, 
-	output scan_o,
+	input wire  scan_i, 
+	output wire scan_o,
 
-	input  shift_i,   // Shift DR
-	input  capture_i, // Capture DR
-	input  update_i,  // Update DR
-	input  mode_i
+	input wire  shift_i,   // Shift DR
+	input wire  capture_i, // Capture DR
+	input wire  update_i,  // Update DR
+	input wire  mode_i
 );
 
 wire [W-1:0] chain;
@@ -61,18 +61,18 @@ assign scan_o = scan_next[W-1];
 endmodule 
 
 module bsc_inner(
-	input  tck,
+	input wire  tck,
 
-	input  data_i, 
-	output data_o,
+	input wire  data_i, 
+	output wire data_o,
 
-	input  scan_i, 
-	output scan_o,
+	input wire  scan_i, 
+	output wire scan_o,
 	
-	input  shift_i,   // Shift DR
-	input  capture_i, // Capture DR
-	input  update_i,  // Update DR
-	input  mode_i
+	input wire  shift_i,   // Shift DR
+	input wire  capture_i, // Capture DR
+	input wire  update_i,  // Update DR
+	input wire  mode_i
 );
 wire ff_1_next, ff_2_next;
 reg  ff_1_q, ff_2_q;

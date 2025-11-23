@@ -10,21 +10,21 @@
 module mac_unit #(
 	parameter W = 8
 	)(
-	input clk, 
+	input wire clk, 
 
-	input          step_i, 
+	input wire           step_i, 
 	
-	input [W-1:0]  data_i, //right side input data
-	input [W-1:0]  data_top_i, // top input data
+	input wire [W-1:0]   data_i, //right side input data
+	input wire [W-1:0]   data_top_i, // top input data
 
-	input          wr_weight_v_i,	
-	input [W-1:0]  weight_i, 
+	input wire           wr_weight_v_i,	
+	input wire [W-1:0]   weight_i, 
 
-	input  [1:0]   jtag_ureg_addr_i, 
+	input wire  [1:0]    jtag_ureg_addr_i, 
 	output logic [W-1:0] jtag_ureg_data_o, 
 
-	output [W-1:0] data_o, // left side output data, will become the right side input data of the next unit leftwards
-	output [W-1:0] res_o // result, become the top input data for the next unit bellow
+	output wire [W-1:0]  data_o, // left side output data, will become the right side input data of the next unit leftwards
+	output wire [W-1:0]  res_o // result, become the top input data for the next unit bellow
 ); 
 localparam MAX_DATA = {1'b0, {W-1{1'b1}}};
 localparam MIN_DATA = {1'b1, {W-1{1'b0}}};
