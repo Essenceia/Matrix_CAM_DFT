@@ -15,7 +15,7 @@
 
 #define DELAY_MS 1000
 
-#define PIO_N    2 // number of PIO SM used
+#define PIO_N    3 // number of PIO SM used
 #define PIO_LED  0
 #define PIO_CLK  1
 #define PIO_WR   2
