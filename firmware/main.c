@@ -125,7 +125,7 @@ int main() {
 
 	while (true) {
 		setup_rd_dma_res_stream(rd_dma_chan, NN, res_buffer, NN, pio[PIO_RD], sm[PIO_RD]);
-		sleep_ms(DELAY_MS);
+		//sleep_ms(DELAY_MS);
 		pio_sm_put_blocking(pio[PIO_LED], sm[PIO_LED], led);
 		led = led ? 0:1;
 		send_data(d, true, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);

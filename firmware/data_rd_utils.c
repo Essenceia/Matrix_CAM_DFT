@@ -24,7 +24,7 @@ void setup_rd_dma_res_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl
 	hard_assert(tc <= bl*PIO_FIFO_W);
 	hard_assert(tc);
 	hard_assert(buffer);
-	// TODO remove hard_assert(!dma_channel_is_busy(dma_chan));
+	hard_assert(!dma_channel_is_busy(dma_chan));
 
 	// clear hash, helps with debug
 	memset(buffer, 0, bl);
@@ -36,7 +36,7 @@ void setup_rd_dma_res_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl
 }
 
 void read_res(uint8_t* res, size_t l, uint8_t *buffer, size_t bl, uint dma_chan){
-	// TODO remove dma_channel_wait_for_finish_blocking(dma_chan);
+	dma_channel_wait_for_finish_blocking(dma_chan);
 	// assume no empty cycle 
 	hard_assert(l <= bl);
 	memcpy(res, buffer, l);
