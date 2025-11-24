@@ -16,3 +16,6 @@ build
 *.swp
 
 config
+hooks
+info
+description
