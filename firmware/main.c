@@ -9,6 +9,7 @@
 #include "led.pio.h"
 #include "bus_clk.pio.h"
 #include "pio_utils.h" 
+#include "data_wr.pio.h" 
 
 #define DELAY_MS 1000
 

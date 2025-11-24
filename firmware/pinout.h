@@ -6,7 +6,7 @@
 
 #define DATA_W        8
 #define DATA_BASE_PIN 0 
-#define RES_BASE_PIN 8
+#define RES_BASE_PIN  8
 #define CTRL_BASE_PIN 16
 
 typedef struct __attribute__((packed)) {
@@ -14,7 +14,7 @@ typedef struct __attribute__((packed)) {
 	uint8_t res_o;
 	uint8_t valid_i : 1;
 	uint8_t data_mode_i : 1;
-	uint8_t data_rst_add_i : 1;
+	uint8_t data_rst_addr_i : 1;
 	uint8_t ready_o : 1;
 	uint8_t unusued : 3;
 	uint8_t padding : 3; /* rpi-pico doesn't expose pins in order, after gpio 22 the next pin is gpio 26 */ 
