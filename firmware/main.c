@@ -115,5 +115,7 @@ int main() {
 		sleep_ms(DELAY_MS);
 		pio_sm_put_blocking(pio[PIO_LED], sm[PIO_LED], led);
 		led = led ? 0:1;
+		send_data(d, true, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
+		send_data(d, false, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
     }
 }
