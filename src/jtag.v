@@ -102,7 +102,7 @@ end
 (* MARK_DEBUG = "true" *) wire [IR_W-1:0] ir; 
 wire ir_tdo;
 ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
-	.rst_tap(trst_i | ~jtag_enabled_q),
+	.rst_tap(trst_i | ~jtag_enabled_q | (fsm_q == RESET)),
 
 	.tck_i(tck_i),
 	.tdi_i(tdi_i),
