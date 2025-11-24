@@ -3,7 +3,7 @@ set core_name "db_core_0"
 create_debug_core $core_name ila
 
 set_property C_INPUT_PIPE_STAGES 2   [get_debug_cores ${core_name}]
-
+set_property C_DATA_DEPTH 4096       [get_debug_cores ${core_name}]
 # connect clk to main design logic clk
 connect_debug_port db_core_0/clk [get_nets clk]
 

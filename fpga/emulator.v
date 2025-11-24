@@ -40,11 +40,11 @@ wire rst_async;
 reg rst_n_q, rst_n_d1_q;
 wire error;
  
-(* MARK_DEBUG = "true" *)wire [7:0] ui_in;
-(* MARK_DEBUG = "true" *)wire [7:0] uio_in; 
+wire [7:0] ui_in;
+wire [7:0] uio_in; 
 
 wire [7:0] uo_out; 
-(* MARK_DEBUG = "true" *) wire [7:0] uio_out;
+wire [7:0] uio_out;
 wire [7:0] uio_oe;
 
 reg [PMOD_W-1:0] data_bus_q, data_q;
@@ -52,12 +52,12 @@ reg  data_mode_bus_q, data_mode_q;
 reg  data_v_bus_q, data_v_q;
 reg  data_rst_addr_bus_q, data_rst_addr_q;
 
-(* MARK_DEBUG = "true" *) wire [PMOD_W-1:0] res;
+wire [PMOD_W-1:0] res;
 reg  [PMOD_W-1:0] res_bus_q;
-(* MARK_DEBUG = "true" *) wire res_v;
+wire res_v;
 reg  [1:0] res_v_bus_q;
 
-wire tck, tdi, tdo, tms; 
+(* MARK_DEBUG = "true" *) wire tck, tdi, tdo, tms; 
 
 /* clk */
 IBUF m_ibuf_clk(
@@ -147,12 +147,17 @@ debounce m_switch_debounce(
 	.switch_i(switch_i[1]),
 	.switch_o(ena)
 );
+/* jtag */
+assign tck = tck_i;
+assign tdi = tdi_i; 
+assign tms = tms_i; 
+assign tdo_o = tdo; 
 
 /* deisgn top level */ 
-assign ui_in = {data_q[6:0] , tck_i };
-assign uio_in = { 2'b0 , tms_i , tdi_i , data_rst_addr_q, data_mode_q, data_v_q, data_q[7]};
+assign ui_in = {data_q[6:0] , tck };
+assign uio_in = { 2'b0 , tms , tdi , data_rst_addr_q, data_mode_q, data_v_q, data_q[7]};
 
-assign tdo_o        = uio_out[6];
+assign tdo          = uio_out[6];
 assign res_v        = uio_out[7];
 assign res          = uo_out;
 
