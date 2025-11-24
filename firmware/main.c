@@ -11,8 +11,10 @@
 #include "pio_utils.h" 
 #include "data_wr.pio.h" 
 #include "sync_sm.pio.h"
+#include "data_rd.pio.h" 
 
 #include "data_wr_utils.h" 
+#include "data_rd_utils.h" 
 
 #define DELAY_MS 1000
 
@@ -65,6 +67,11 @@ int main() {
 	clk_div = (float)clock_get_hz(clk_sys) / (DATA_PIO_CLK_FREQ_HZ); 
 	data_wr_program_init(pio[PIO_WR], sm[PIO_WR], offset[PIO_WR], clk_div);
 
+	/* data rd */ 
+	s &= pio_claim_free_sm_and_add_program(&data_rd_program, &pio[PIO_RD], &sm[PIO_RD], &offset[PIO_RD]);
+	log_init(PIO_RD);
+	hard_assert(s);
+	data_rd_program_init(pio[PIO_RD], sm[PIO_RD], offset[PIO_RD], clk_div);
 	
 	/* bus clk */
 	s &= pio_claim_free_sm_and_add_program_for_gpio_range(
@@ -93,11 +100,13 @@ int main() {
 	/* start pio's in sync */
 	hard_assert(pio[PIO_CLK] == pio[PIO_WR]);
 	hard_assert(pio[PIO_CLK] == pio[PIO_SYNC]);
-	uint32_t sm_mask = 1u << sm[PIO_CLK] | 1u << sm[PIO_WR] | 1u << sm[PIO_SYNC];
+	hard_assert(pio[PIO_WR] == pio[PIO_RD]);
+	uint32_t sm_mask = 1u << sm[PIO_CLK] | 1u << sm[PIO_WR] | 1u << sm[PIO_SYNC] | 1u << sm[PIO_RD];
 	pio_enable_sm_mask_in_sync(pio[PIO_CLK], sm_mask);
 
 	/* dma */ 
 	uint wr_dma_chan = init_wr_dma_channel(pio[PIO_WR], sm[PIO_WR]);
+	uint rd_dma_chan = init_rd_dma_channel(pio[PIO_RD], sm[PIO_RD]);
 
 	/* send simple config */ 
 	send_data_rst(p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
