@@ -66,7 +66,7 @@ localparam IR_PAUSE   = 13;
 localparam IR_EXIT_2  = 14;
 localparam IR_UPDATE  = 15;
 
-reg [3:0] fsm_q;
+(* MARK_DEBUG = "true" *) reg [3:0] fsm_q;
 
 /* fsm is reset though the RESET TAP */
 always @(posedge tck_i) begin
@@ -96,7 +96,7 @@ end
 
 
 /* IR register */
-wire [IR_W-1:0] ir; 
+(* MARK_DEBUG = "true" *) wire [IR_W-1:0] ir; 
 wire ir_tdo;
 ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
 	.rst_tap(trst_i | ~jtag_enabled_q),
@@ -176,7 +176,10 @@ assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
 				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo_i:
 				ureg_data_q[0]; // USER_REG
 
-assign tdo_o = (fsm_q == IR_SHIFT)? ir_tdo: 
+reg tdo_q;
+always @(posedge tck_i) begin
+	tdo_q <= (fsm_q == IR_SHIFT)? ir_tdo: 
 			   dr_tdo;
-		
+end
+assign tdo_o = tdo_q;
 endmodule
