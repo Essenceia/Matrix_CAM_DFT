@@ -128,3 +128,10 @@ corrupting the sampled data.
 
 This also applies when doing a boundary scan. 
 
+# Future improvements 
+
+This design was the first iteration for a MAC systolic accelerator. Here are a few paths I have identified for future improvements:
+- Explore floating point arithmetic
+- Integrate on-chip SRAM to reduce input data bottleneck
+- More directed MAC unit physical layout, with particular attention given to adder tree implementations; experiment with full adder cells
+- Add support for detecting manufacturing faults in silicon and integrate an ATPG flow into future workflows
