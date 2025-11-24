@@ -25,12 +25,12 @@ assign     unused_input = uio_in[7:6];
 assign     uio_out[5:0] = 6'b0;  
 
 /* I/O interface, marked for boundary scan insertion */ 
-(* MARK_BSC = "in"  *) wire       data_v_bsc;
-(* MARK_BSC = "in"  *) wire       data_mode_bsc; 
-(* MARK_BSC = "in"  *) wire       data_rst_bsc; 
-(* MARK_BSC = "in"  *) wire [7:0] data_bsc;
-(* MARK_BSC = "out" *) wire       result_v_bsc;
-(* MARK_BSC = "out" *) wire [7:0] result_bsc;
+(* MARK_BSC = "in" , MARK_DEBUG = "true" *) wire       data_v_bsc;
+(* MARK_BSC = "in" , MARK_DEBUG = "true" *) wire       data_mode_bsc; 
+(* MARK_BSC = "in" , MARK_DEBUG = "true" *) wire       data_rst_bsc; 
+(* MARK_BSC = "in" , MARK_DEBUG = "true" *) wire [7:0] data_bsc;
+(* MARK_BSC = "out", MARK_DEBUG = "true" *) wire       result_v_bsc;
+(* MARK_BSC = "out", MARK_DEBUG = "true" *) wire [7:0] result_bsc;
 
 wire [BSC_CHAIN_W-1:0] bsc_chain;
 wire bsc_tdo;
@@ -39,7 +39,7 @@ wire bsc_capture;
 wire bsc_update;
 wire bsc_mode; 
 
-wire       data_v;
+(* MARK_DEBUG = "true" *) wire       data_v;
 wire       data_mode; 
 wire       data_rst; 
 wire [7:0] data;
@@ -52,6 +52,12 @@ assign data_rst_bsc  = uio_in[3];
 assign data_bsc      = {uio_in[0], ui_in[7:1]};
 assign uio_out[7]    = result_v_bsc;
 assign uo_out        = result_bsc;
+
+wire tck;
+wire tdi;
+wire tms; 
+wire tdo;
+wire trst; 
 
 assign bsc_chain[0] = tdi;
 assign bsc_tdo = bsc_chain[BSC_CHAIN_W-1];
@@ -101,12 +107,6 @@ bsc #(.W(8)) m_bsc_result_out(
 
 
 /* DFT interface */ 
-wire tck;
-wire tdi;
-wire tms; 
-wire tdo;
-wire trst; 
-
 assign tck        = ui_in[0]; // clk's can only be driven from the ui_in pins
 assign tdi        = uio_in[4];
 assign tms        = uio_in[5];

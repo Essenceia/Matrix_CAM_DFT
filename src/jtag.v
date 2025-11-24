@@ -67,6 +67,7 @@ localparam IR_EXIT_2  = 14;
 localparam IR_UPDATE  = 15;
 
 (* MARK_DEBUG = "true" *) reg [3:0] fsm_q;
+reg  jtag_enabled_q;
 
 /* fsm is reset though the RESET TAP */
 always @(posedge tck_i) begin
@@ -155,7 +156,6 @@ end
 assign ureg_addr_o = ureg_addr_q; 
 
 /* JTAG dissabled mask */ 
-reg  jtag_enabled_q;
 always @(posedge tck_i or negedge rst_n) begin
   if (~rst_n)
     jtag_enabled_q <= 1'b0;  

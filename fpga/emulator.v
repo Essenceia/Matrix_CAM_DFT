@@ -53,9 +53,11 @@ reg  data_v_bus_q, data_v_q;
 reg  data_rst_addr_bus_q, data_rst_addr_q;
 
 wire [PMOD_W-1:0] res;
-reg  [PMOD_W-1:0] res_bus_q;
 wire res_v;
-reg  [1:0] res_v_bus_q;
+reg  [PMOD_W-1:0] res_bus_q;
+reg              res_v_bus_q;
+(* MARK_DEBUG = "true" *)reg [PMOD_W-1:0] res_bus_d2_q;
+(* MARK_DEBUG = "true" *)reg              res_v_bus_d2_q;
 
 (* MARK_DEBUG = "true" *) wire tck, tdi, tdo, tms; 
 
@@ -109,10 +111,16 @@ always @(posedge clk) begin
 	data_v_q     <= data_v_bus_q;
 end
 
+/* keeping the same timing distortions between both directions */ 
 always @(posedge clk) begin
-	res_v_bus_q  <= res_v;
-	res_bus_q    <= res;
+	res_v_bus_q    <= res_v;
+	res_v_bus_d2_q <= res_v_bus_q;
+	res_bus_q      <= res;
+	res_bus_d2_q   <= res_bus_q;
 end
+
+assign res_o = res_bus_d2_q;
+assign res_v_o = res_v_bus_d2_q;
 
 /* debug leds */
 assign led_o[0] = rst_n_d1_q;
