@@ -39,6 +39,16 @@ void read_res(uint8_t* res, size_t l, uint8_t *buffer, size_t bl, uint dma_chan)
 	dma_channel_wait_for_finish_blocking(dma_chan);
 	// assume no empty cycle 
 	hard_assert(l <= bl);
-	memcpy(res, buffer, l);
+	memset(res, 0, l);
+
+	// filter out invalid data transfers
+	for (size_t i = 0; i < bl-l; i++){
+		if ( buffer[i] != 0){
+			// found our data
+			memcpy(res, &buffer[i], l);
+			break;
+		}
+		if ( i+1 == bl-l) hard_assert(1);
+	}
 }
 
