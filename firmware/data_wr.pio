@@ -13,8 +13,10 @@ data_wr:
 	set pins, 0
 .wrap_target
 data_start:
+	irq clear 5
 	irq wait 4 
 	pull noblock
+	irq set 5 [2]
 	jmp data_wr
 .wrap
 
