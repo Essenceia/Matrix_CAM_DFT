@@ -116,7 +116,7 @@ ir #(.W(IR_W), .RESET_OPCODE(IDCODE)) m_ir(
 reg [31:0] idcode_q;
 always @(posedge tck_i) begin
 	if (fsm_q == DR_CAPTURE)    idcode_q <= PART_ID;
-	else if (fsm_q == DR_SHIFT) idcode_q <= {1'b0, idcode_q[31:1]};
+	else if (fsm_q == DR_SHIFT) idcode_q <= {tdi_i, idcode_q[31:1]};
 end
 
 /* BYPASS */
@@ -179,7 +179,9 @@ assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
 reg tdo_q;
 always @(posedge tck_i) begin
 	tdo_q <= (fsm_q == IR_SHIFT)? ir_tdo: 
-			   dr_tdo;
+         	 (fsm_q == DR_SHIFT)? dr_tdo:
+			 1'b0;
+
 end
 assign tdo_o = tdo_q;
 endmodule
