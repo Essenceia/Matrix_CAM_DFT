@@ -19,12 +19,12 @@ uint init_rd_dma_channel(PIO pio, uint sm){
 	return dma_chan; 
 }
 
-void setup_rd_dma_hash_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl, PIO pio, uint sm){
+void setup_rd_dma_res_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl, PIO pio, uint sm){
 	size_t tc = (l + PIO_FIFO_W-1)/ PIO_FIFO_W;	
 	hard_assert(tc <= bl*PIO_FIFO_W);
 	hard_assert(tc);
 	hard_assert(buffer);
-	hard_assert(!dma_channel_is_busy(dma_chan));
+	// TODO remove hard_assert(!dma_channel_is_busy(dma_chan));
 
 	// clear hash, helps with debug
 	memset(buffer, 0, bl);
@@ -35,8 +35,8 @@ void setup_rd_dma_hash_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t b
 	dma_channel_set_transfer_count(dma_chan, tc, true);	
 }
 
-void read_hash(uint* res, size_t l, uint8_t *buffer, size_t bl, uint dma_chan){
-	dma_channel_wait_for_finish_blocking(dma_chan);
+void read_res(uint8_t* res, size_t l, uint8_t *buffer, size_t bl, uint dma_chan){
+	// TODO remove dma_channel_wait_for_finish_blocking(dma_chan);
 	// assume no empty cycle 
 	hard_assert(l <= bl);
 	memcpy(res, buffer, l);

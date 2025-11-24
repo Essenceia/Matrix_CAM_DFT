@@ -16,7 +16,13 @@
 #include "data_wr_utils.h" 
 #include "data_rd_utils.h" 
 
-#define DELAY_MS 1000
+#include "hardware/structs/dma_debug.h"
+#include "hardware/structs/dma.h"
+#include "hardware/structs/pio.h"
+#include "hardware/structs/sio.h"
+
+
+#define DELAY_MS 200
 
 #define PIO_N    5 // number of PIO SM used
 #define PIO_LED  0
@@ -45,8 +51,9 @@ int main() {
 	bool s = true; 
 	uint led = 1;
 
-	data_t *d; 
-	d = (data_t*) malloc(sizeof(data_t));
+	uint8_t res_buffer[NN];
+    uint8_t res[NN];
+	data_t *d = (data_t*) malloc(sizeof(data_t));
 	d->data[0] = 0;
 	d->data[1] = 1;
 	d->data[2] = 2;
@@ -54,6 +61,11 @@ int main() {
 	
 	size_t pl = NN;
 	pinout_t *p = (pinout_t*)malloc(pl * sizeof(pinout_t));
+
+	/* debug */
+	pio_hw_t * debug_pio = PIO_INSTANCE(1);
+	dma_debug_hw_t *debug_dma = dma_debug_hw;
+	dma_hw_t* hw_dma = dma_hw;
 
 	// set system clk
 	set_sys_clock_hz(PICO_SYS_CLK_HW, true);
@@ -112,10 +124,12 @@ int main() {
 	send_data_rst(p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
 
 	while (true) {
+		setup_rd_dma_res_stream(rd_dma_chan, NN, res_buffer, NN, pio[PIO_RD], sm[PIO_RD]);
 		sleep_ms(DELAY_MS);
 		pio_sm_put_blocking(pio[PIO_LED], sm[PIO_LED], led);
 		led = led ? 0:1;
 		send_data(d, true, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
 		send_data(d, false, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
+		read_res(res, NN, res_buffer, NN, rd_dma_chan);
     }
 }

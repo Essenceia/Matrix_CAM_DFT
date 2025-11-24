@@ -30,7 +30,7 @@ void data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl)
 	}
 }
 
-void send_common(data_t *data, bool is_weight,  pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm)
+void send_data(data_t *data, bool is_weight,  pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm)
 {
 	hard_assert(data);
 	data_to_pinout(data, is_weight, p, pl); 
