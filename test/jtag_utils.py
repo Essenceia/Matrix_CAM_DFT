@@ -100,12 +100,18 @@ async def read_dr(dut, drl, tdi_buffer=bytearray(0), bypass_read=False):
     for i in range(0, drl):
         dut.uio_in.value = get_cmd(tms=(i == drl-1), tdi=(tdi_buffer[i] == 1))
         await ClockCycles(dut.tck, 1)
-        tdo = dut.uio_out.value[6]
-        if not(bypass_read):
-            ret |= int(tdo) << i 
+        if i : 
+            tdo = dut.uio_out.value[6]
+            if not(bypass_read):
+                ret |= int(tdo) << i-1
+  
     # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
+    
+    tdo = dut.uio_out.value[6]
+    if not(bypass_read):
+        ret |= int(tdo) << drl-1
     
     # update dr
     dut.uio_in.value = get_cmd(tms=False)
@@ -169,20 +175,21 @@ async def test_bypass(dut):
             tdi_buffer.append(tdi)
         dut.uio_in.value = get_cmd(tms=(i == x-1), tdi=(tdi == 1))
         await ClockCycles(dut.tck, 1)
-        tdo = dut.uio_out.value[6]
-        if i :
-            # lose first byte
+        if ( i > 1 ) :
+            tdo = dut.uio_out.value[6]
             tdo_buffer.append(tdo)
    
+    # exit 1r
+    dut.uio_in.value = get_cmd(tms=True)
+    await ClockCycles(dut.tck, 1)
+    tdo = dut.uio_out.value[6]
+    tdo_buffer.append(tdo) 
+
     # check bypass results, input should match output
     cocotb.log.info("tdi %s", tdi_buffer)
     cocotb.log.info("tdo %s", tdo_buffer)
     assert(tdi_buffer == tdo_buffer) 
- 
-     # exit 1r
-    dut.uio_in.value = get_cmd(tms=True)
-    await ClockCycles(dut.tck, 1)
-    
+     
     # update dr
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)
@@ -260,17 +267,22 @@ async def test_bsc(dut, extest=True):
         cocotb.log.debug("i %d %s", i, tdi_buffer[i])
         await ClockCycles(dut.tck, 1)
         tdo = dut.uio_out.value[6]
-        if ( i > PIN_OUT_N-1):
-            cocotb.log.debug("i %d %s", i, tdo)
+        if (i-1 > PIN_OUT_N-1):
+            cocotb.log.info("i %d %s", i, tdo)
             tdo_buffer.append(tdo)
-   
-    # check captured bits values match inputs
-    assert(expected_bsc_in == tdo_buffer)
- 
-     # exit 1r
+    
+    # exit 1r
     dut.uio_in.value = get_cmd(tms=True)
     await ClockCycles(dut.tck, 1)
-    
+   
+    tdo = dut.uio_out.value[6]
+    tdo_buffer.append(tdo) 
+     
+    # check captured bits values match inputs
+    cocotb.log.debug("expected %s",expected_bsc_in)
+    cocotb.log.debug("got      %s",tdo_buffer)
+    assert(expected_bsc_in == tdo_buffer)
+ 
     # update dr
     dut.uio_in.value = get_cmd(tms=False)
     await ClockCycles(dut.tck, 1)

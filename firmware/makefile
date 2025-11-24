@@ -10,7 +10,7 @@ GDB_SERVER_ADDR:=localhost
 GDB_SERVER_PORT:=3333
 
 ${BUILD_DIR}: CMakeLists.txt
-	mkdir ${BUILD_DIR}
+	mkdir -p ${BUILD_DIR}
 	PROJECT_NAME=${PROJECT_NAME} cmake -S . ${BUILD_DIR}
 
 .PHONY: setup build flash debug gdb

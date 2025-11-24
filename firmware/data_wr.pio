@@ -1,0 +1,75 @@
+.program data_wr
+
+.define offset 0
+.origin offset
+
+data_init:
+	set pins, 0
+	set x, 0
+	jmp data_start
+data_wr:
+	out pins, 32
+	jmp !OSRE data_wr
+	set pins, 0
+.wrap_target
+data_start:
+	irq clear 5
+	irq wait 4 
+	pull noblock
+	irq set 5 [2]
+	jmp data_wr
+.wrap
+
+% c-sdk {
+static inline void data_wr_program_init(PIO pio, uint sm, uint offset, float fdiv){
+	uint i;
+	uint32_t pindirs = 0;// out = 1, in = 0
+	uint32_t pinmask = 0;
+	pio_sm_config c = data_wr_program_get_default_config(offset);
+
+	// join fifo's for one large fifo since sm is tx only
+	sm_config_set_fifo_join(&c, PIO_FIFO_JOIN_TX);
+
+	// enable fifo autopull and set threashold (32)
+	sm_config_set_out_shift(&c, true, true, 32);
+
+	//set "out" instruction to cover the entire gpio range
+	sm_config_set_out_pins(&c, 0, 32);
+
+	// set "set" instruction base pin offset to ctrl bit to overcome the 
+	// 5b wide wright limitation
+	_Static_assert(CTRL_BASE_PIN+5 > CTRL_VALID_PIN);
+	sm_config_set_set_pins(&c, CTRL_VALID_PIN, 3);
+
+	// set config
+	pio_sm_init(pio, sm, offset, &c); 
+
+	// enable pins, connect to pio
+	for(i=DATA_BASE_PIN; i < DATA_BASE_PIN + DATA_W; i++){ // data
+		pio_gpio_init(pio, i);
+		gpio_set_drive_strength(i, GPIO_DRIVE_STRENGTH_12MA);
+		gpio_set_slew_rate(i, GPIO_SLEW_RATE_FAST);
+		gpio_set_pulls(i, false, true);
+	}
+	pindirs |= DATA_MASK << DATA_BASE_PIN;
+	pinmask |= DATA_MASK << DATA_BASE_PIN;
+
+	for(i=CTRL_DATA_BASE_PIN; i < CTRL_DATA_BASE_PIN + CTRL_DATA_W; i++){ // ctrl data
+		pio_gpio_init(pio, i);
+		gpio_set_drive_strength(i, GPIO_DRIVE_STRENGTH_12MA);
+		gpio_set_slew_rate(i, GPIO_SLEW_RATE_FAST);
+		gpio_set_pulls(i, false, true);
+	}
+	pinmask |= CTRL_DATA_MASK << CTRL_DATA_BASE_PIN;
+	pindirs |= CTRL_DATA_MASK << CTRL_DATA_BASE_PIN;
+
+	pio_sm_set_pindirs_with_mask(pio, sm, pindirs, pinmask); 
+	
+	// set clk freq 
+	pio_sm_set_clkdiv(pio, sm, fdiv);
+
+	// clear fifo's
+	pio_sm_clear_fifos(pio, sm);
+}
+%}
+

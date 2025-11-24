@@ -44,7 +44,9 @@ localparam [IR_W-1:0] EXTEST         = {IR_W{1'b0}};// 0 - spec defined
 localparam [IR_W-1:0] IDCODE         = {{IR_W-1{1'b0}}, 1'b1}; // 1
 localparam [IR_W-1:0] SAMPLE_PRELOAD = {{IR_W-2{1'b0}}, 2'd2}; // 2
 localparam [IR_W-1:0] USER_REG       = {{IR_W-2{1'b0}}, 2'd3}; // 3
+/* verilator lint_off UNUSEDPARAM */
 localparam [IR_W-1:0] BYPASS         = {IR_W{1'b1}};         // max
+/* verilator lint_on UNUSEDPARAM */
 
 /* part identifier, returned on IDCODE */
 localparam [31:0] PART_ID = {VERSION_NUM, PART_NUM, MANIFACTURE_ID, 1'b1};
