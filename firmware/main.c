@@ -10,15 +10,18 @@
 #include "bus_clk.pio.h"
 #include "pio_utils.h" 
 #include "data_wr.pio.h" 
+#include "sync_sm.pio.h"
 
 #include "data_wr_utils.h" 
 
 #define DELAY_MS 1000
 
-#define PIO_N    3 // number of PIO SM used
+#define PIO_N    5 // number of PIO SM used
 #define PIO_LED  0
 #define PIO_CLK  1
 #define PIO_WR   2
+#define PIO_RD   3
+#define PIO_SYNC 4
 #define macro_str(x) #x
 
 #define PICO_SYS_CLK_HW              200000000   // 200 MHz
@@ -72,7 +75,13 @@ int main() {
 	hard_assert(s);
 	clk_div = (float)clock_get_hz(clk_sys) / (BUS_PIO_CLK_FREQ_HZ); 
 	bus_clk_program_init(pio[PIO_CLK], sm[PIO_CLK], offset[PIO_CLK], BUS_CLK_PIN, clk_div);
-	pio_sm_set_enabled(pio[PIO_CLK], sm[PIO_CLK], true);
+
+	/* sync program */
+	s &= pio_claim_free_sm_and_add_program(&sync_sm_program, &pio[PIO_SYNC], &sm[PIO_SYNC], &offset[PIO_SYNC]);
+	log_init(PIO_SYNC);
+	hard_assert(s);
+	sync_sm_program_init(pio[PIO_SYNC], sm[PIO_SYNC], offset[PIO_SYNC], clk_div);
+
 
 	/* led - explicitlt place on PIO0 to prevent overwritting of GPIO25 by `pull noblock` on data_wr*/
 	s = allocate_prog_pio(0, &pio[PIO_LED], &sm[PIO_LED], &offset[PIO_LED], &led_program);
@@ -82,7 +91,9 @@ int main() {
 
 
 	/* start pio's in sync */
-	uint32_t sm_mask = 1u << sm[PIO_CLK] | 1u << sm[PIO_WR];
+	hard_assert(pio[PIO_CLK] == pio[PIO_WR]);
+	hard_assert(pio[PIO_CLK] == pio[PIO_SYNC]);
+	uint32_t sm_mask = 1u << sm[PIO_CLK] | 1u << sm[PIO_WR] | 1u << sm[PIO_SYNC];
 	pio_enable_sm_mask_in_sync(pio[PIO_CLK], sm_mask);
 
 	/* dma */ 
