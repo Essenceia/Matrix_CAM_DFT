@@ -172,15 +172,14 @@ assign bsc_mode_o    = jtag_enabled_q & ir == EXTEST;
 
 /* TDO mux */
 assign dr_tdo = (ir == IDCODE) ? idcode_q[0] :
-				(ir == BYPASS) ? bypass_q : 
 				(ir == SAMPLE_PRELOAD | ir == EXTEST) ? bsc_tdo_i:
-				ureg_data_q[0]; // USER_REG
+				(ir == USER_REG) ? ureg_data_q[0] :
+				bypass_q; 
 
 reg tdo_q;
 always @(posedge tck_i) begin
 	tdo_q <= (fsm_q == IR_SHIFT)? ir_tdo: 
-         	 (fsm_q == DR_SHIFT)? dr_tdo:
-			 1'b0;
+         	 dr_tdo;
 
 end
 assign tdo_o = tdo_q;
