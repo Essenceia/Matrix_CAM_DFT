@@ -11,16 +11,20 @@
 #include "pio_utils.h" 
 #include "data_wr.pio.h" 
 
+#include "data_wr_utils.h" 
+
 #define DELAY_MS 1000
 
 #define PIO_N    2 // number of PIO SM used
 #define PIO_LED  0
 #define PIO_CLK  1
+#define PIO_WR   2
 #define macro_str(x) #x
 
 #define PICO_SYS_CLK_HW              200000000   // 200 MHz
 #define BUS_PIO_CLK_FREQ_HZ  (float)  80000000.0 //  80 MHz
 #define LED_PIO_CLK_FREQ_HZ  (float)  80000000.0 //  80 MHz
+#define DATA_PIO_CLK_FREQ_HZ (float)  80000000.0 //  80 MHz
 
 #define _DMA_BASE (uint32_t) 0x50000000
 #define TC_OFF   (uint32_t) 0x008
@@ -32,15 +36,32 @@ int main() {
 	PIO pio[PIO_N];
 	uint sm[PIO_N];
 	uint offset[PIO_N];
-	float clk_div; 
+	float clk_div;
+	bool s = true; 
 	uint led = 1;
-	pinout_t *p;
-	bool s = true;
+
+	data_t *d; 
+	d = (data_t*) malloc(sizeof(data_t));
+	d->data[0] = 0;
+	d->data[1] = 1;
+	d->data[2] = 2;
+	d->data[3] = 3;
+	
+	size_t pl = NN;
+	pinout_t *p = (pinout_t*)malloc(pl * sizeof(pinout_t));
 
 	// set system clk
 	set_sys_clock_hz(PICO_SYS_CLK_HW, true);
 	
 	stdio_init_all();
+
+	/* data wr */ 
+	s &= pio_claim_free_sm_and_add_program(&data_wr_program, &pio[PIO_WR], &sm[PIO_WR], &offset[PIO_WR]);
+	log_init(PIO_WR);
+	hard_assert(s);
+	clk_div = (float)clock_get_hz(clk_sys) / (DATA_PIO_CLK_FREQ_HZ); 
+	data_wr_program_init(pio[PIO_WR], sm[PIO_WR], offset[PIO_WR], clk_div);
+
 	
 	/* bus clk */
 	s &= pio_claim_free_sm_and_add_program_for_gpio_range(
@@ -58,6 +79,17 @@ int main() {
 	log_init(PIO_LED);
 	hard_assert(s);
 	led_program_init(pio[PIO_LED], sm[PIO_LED], offset[PIO_LED], PICO_DEFAULT_LED_PIN, clk_div);	
+
+
+	/* start pio's in sync */
+	uint32_t sm_mask = 1u << sm[PIO_CLK] | 1u << sm[PIO_WR];
+	pio_enable_sm_mask_in_sync(pio[PIO_CLK], sm_mask);
+
+	/* dma */ 
+	uint wr_dma_chan = init_wr_dma_channel(pio[PIO_WR], sm[PIO_WR]);
+
+	/* send simple config */ 
+	send_data_rst(p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
 
 	while (true) {
 		sleep_ms(DELAY_MS);
