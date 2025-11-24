@@ -71,7 +71,7 @@ The address and data are both `8` bits wide, though only the bottom 4 bits of th
 
 The address uses the following format :
 ```
-[ unused 7:4 ][ mac unit 3:1 ][ register id 1:0 ] 
+[ unused 7:4 ][ mac unit 3:2 ][ register id 1:0 ] 
 ```
 
 Register id mapping, for this mac unit gives us the current : 
