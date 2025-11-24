@@ -4,6 +4,33 @@ ASIC design for a 2x2 systolic matrix multiplier supporting multiply and accumul
 operations on int8 data alongside a design for test infrastructure to help debug
 both usage and diagnose design issues in silicon. 
 
+# MAC 
+
+This design features 4 MAC units performing a fused multiply and add operation (FMA) on 8 bit signed intergers.
+
+``` 
+i*w + z 
+```
+This entire operation is computed in a single cycle at 50 MHz and a single rounding operation is performed on 
+the final operation's results. 
+
+## Frequency 
+
+The 50MHz speed was chosen according to the maximum estimated reliable IO switching frequency and going above
+this would have not resulted in any additional speedup given the IO data transfer and on chip storage bottlenecks.
+
+## Multiplication
+
+Each unit implements a booth radix4 multiplier. This multiplier design was chosen for it's low logic 
+depth and reasonable area cost. Additionally, since we are going signed multiplication, we can remove
+a level in wallace tree we are using for the partial product additions given we only have 4 partial 
+products, unlike the 5 needed for unsigned operations.   
+
+## Data access
+
+This design stores a single 8 bit signed weight per MAC unit internally. The remaining of the input 
+data must be circulated though the input parallel port on every use making IO this design's biggest 
+bottleneck for this first generation. 
 
 # DFT 
 
