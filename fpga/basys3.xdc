@@ -51,9 +51,9 @@ set_property -dict { PACKAGE_PIN C16   IOSTANDARD LVCMOS33  } [get_ports {res_v_
 # clk 
 set_property -dict { PACKAGE_PIN L17  IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {clk_bus_i}];#Sch name = JC7
 create_clock -add -name clk_bus_i -period 25.00 [get_ports clk_bus_i]
-set_property -dict { PACKAGE_PIN K17  IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {tck_i}];#Sch name = JC1
+set_property -dict { PACKAGE_PIN K17   IOSTANDARD LVCMOS33  } [get_ports {tdi_i}];#Sch name = JC1
+set_property -dict { PACKAGE_PIN M18  IOSTANDARD LVCMOS33 PULLDOWN true } [get_ports {tck_i}];#Sch name = JC2
 create_clock -add -name tck_i -period 500.00 [get_ports tck_i]
-set_property -dict { PACKAGE_PIN M18   IOSTANDARD LVCMOS33  } [get_ports {tdi_i}];#Sch name = JC2
 set_property -dict { PACKAGE_PIN N17   IOSTANDARD LVCMOS33  } [get_ports {tms_i}];#Sch name = JC3
 set_property -dict { PACKAGE_PIN P18   IOSTANDARD LVCMOS33  } [get_ports {tdo_o}];#Sch name = JC4
 

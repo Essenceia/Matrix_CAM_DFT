@@ -46,10 +46,7 @@ wire error;
 wire [7:0] uo_out; 
 (* MARK_DEBUG = "true" *) wire [7:0] uio_out;
 wire [7:0] uio_oe;
-wire [SWITCH_W-1:0] switch;
-wire [LED_W-1:0] led;
 
-wire [PMOD_W-1:0] data;
 reg [PMOD_W-1:0] data_bus_q, data_q;
 reg  data_mode_bus_q, data_mode_q;
 reg  data_v_bus_q, data_v_q;
@@ -99,7 +96,7 @@ BUFG m_bufg_clk(
 );
 
 always @(posedge clk) begin
-	data_bus_q      <= data;
+	data_bus_q      <= data_i;
 	data_q          <= data_bus_q;
 
 	data_mode_bus_q <= data_mode_i;
@@ -118,20 +115,19 @@ always @(posedge clk) begin
 end
 
 /* debug leds */
-assign led[0] = rst_n_d1_q;
-assign led[1] = ena;
-
-assign led[10:3] = data_q;
-
-assign led[11]    = tck;
-assign led[12]    = tdi;
-assign led[13]    = tms;
-assign led[15]    = tdo;
+assign led_o[0] = rst_n_d1_q;
+assign led_o[1] = ena;
+assign led_o[2] = clk_ibuf; 
+assign led_o[10:3] = data_q;
+assign led_o[11]    = tck;
+assign led_o[12]    = tdi;
+assign led_o[13]    = tms;
+assign led_o[15]    = tdo;
 
 assign unused_o = {4'h0, 1'b1, {7{1'b1}}}; // an, dp, seg
 
 /* rst */
-assign rst_async = switch[0];
+assign rst_async = switch_i[0];
 
 always @(posedge clk or posedge rst_async) begin
 	if (rst_async) begin
@@ -148,7 +144,7 @@ end
 debounce m_switch_debounce(
 	.clk(clk),
 	.rst_async(rst_async),
-	.switch_i(switch[1]),
+	.switch_i(switch_i[1]),
 	.switch_o(ena)
 );
 
