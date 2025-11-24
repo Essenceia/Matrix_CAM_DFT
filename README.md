@@ -1,16 +1,26 @@
 # Multiply and accumulate matrix multiplier ASIC with design for test infracture
 
-ASIC design for a 2x2 systolic matrix multiplier supporting multiply and accumulate
+ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate
 operations on int8 data alongside a design for test infrastructure to help debug
 both usage and diagnose design issues in silicon. 
+
+# ASIC 
+
+This accelerator was designed for the GF180nm node using the gf180mcuD PDK. It occupies 1127,83 µm² of 
+die area and had an target typical operating volate of 3.3V at 25°C.
+
+This design features two clock trees, one for the MAC and another for the JTAG TAP, the MAC clk targets 
+a 50MHz operating frequency, and the JTAG 2MHz.
+
+
+There are currently no know manifacturability issues. 
+
+Current status: taped-in, in fabrication
 
 # MAC 
 
 This design features 4 MAC units performing a fused multiply and add operation (FMA) on 8 bit signed intergers.
 
-``` 
-i*w + z 
-```
 This entire operation is computed in a single cycle at 50 MHz and a single rounding operation is performed on 
 the final operation's results. 
 
