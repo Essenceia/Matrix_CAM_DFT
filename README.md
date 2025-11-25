@@ -2,6 +2,8 @@
 
 ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
 
+Documentation on using this accelerator can be found : [here](docs/info.md)
+
 # ASIC 
 
 This accelerator was designed for the GF180nm node using the gf180mcuD PDK. It occupies 1,127.83 µm² of die area and has a target typical operating voltage of 3.3V at 25°C.
@@ -30,13 +32,15 @@ Each unit implements a Booth radix-4 multiplier. This multiplier design was chos
 
 This design stores a single 8-bit signed weight internally per MAC unit. The remainder of the input data must be circulated through the input parallel port on every use, making IO this design's biggest bottleneck for this first generation.
 
+This tradeoff was made because weights exhibit higher temporal and spatial locality than input data. In typical usage, each MAC unit will reuse the same weight value multiple times across different computations, and these weights often remain constant across multiple input matrices.
+
 # DFT 
 
 This design embeds a JTAG for debugging the accelerator's usage by probing into internal registers and helping identify PCB issues using a boundary scan.
 
 This JTAG TAP was designed to operate at `2 MHz`, has idcode `0x1beef0d7`.
 
-It's instruction register length is of `3`, and implements the following instructions:
+Its instruction register length is `3`, and implements the following instructions:
 
 | Instruction | Opcode | Description |
 |---|---|---|
@@ -107,7 +111,7 @@ Info : JTAG tap: tpu.tap tap/device found: 0x1beef0d7 (mfg: 0x06b (Transwitch), 
 Warn : gdb services need one or more targets defined
 idcode : 1beef0d7
 read internal register 0:0 : 0x00 - weight
-read internal register 0:1 : 0x00 - multiplicant ( input data )
+read internal register 0:1 : 0x00 - multiplicand ( input data )
 read internal register 0:2 : 0x00 - summand ( input data )
 ...
 ```
