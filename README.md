@@ -2,7 +2,7 @@
 
 ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
 
-![ASIC implementation final render](doc/implem.png)
+![ASIC implementation final render](docs/implem.png)
 
 Documentation on using this accelerator can be found : [here](docs/info.md)
 
