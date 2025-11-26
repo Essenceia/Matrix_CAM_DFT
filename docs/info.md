@@ -20,22 +20,33 @@ and diagnosing PCB connection issues.
 ## Introduction 
 
 The goal of the MAC accelerator is to perform a matrix matrix multiplication between the input data
-matric I and the weight matrix W. 
+matrix $I$ and the weight matrix $W$. 
 ```math
-\begin{bmatrix} i_{0,0} & i_{1,0} \\
+\begin{gather}
+I \times W = R \\
+\begin{pmatrix} 
+i_{0,0} & i_{1,0} \\
  i_{0,1} & i_{1,1} 
-\end{bmatrix} 
+\end{pmatrix} 
 
 \times 
 
-\begin{pmatrix} e & f \\ g & h \end{pmatrix} = \begin{pmatrix} ae+bg & af+bh \\ ce+dg & cf+dh \end{pmatrix}
+\begin{pmatrix} 
+w_{0,0} & w_{1,0} \\ 
+w_{0,1} & w_{1,1} 
+\end{pmatrix} = 
+
+\begin{pmatrix} 
+i_{0,0}w_{0,0}+i_{1,0}w_{0,1} & i_{0,0}w_{1,0}+i_{1,0}w_{1,1}\\ 
+i_{0,1}w_{0,0}+i_{1,1}w_{0,1} & i_{0,1}w_{1,0}+i_{1,1}w_{1,1}\end{pmatrix}
+\end{gather}
+```
+Our MAC accelerator has 4 units and mac unit at will perform the following operation : 
+```math
+c = z \times w_{(x,y)} + a
 ```
 
-
-For faster multiplication we are using a booth radix4 algorythme with wallace trees, allowing us to 
-perform both multiplication and addition in a signle cycle. 
-
-If the result of the MAC operation `w*i + a` exeeds the ranges of the int8, they will be
+If the result of the MAC operation $c$ exeeds the ranges of the int8, they will be
 clamped to `int8_min` and `int8_max`.
 
 For data transfers to and from the chip the matrixes are faltened using the following mapping : 
