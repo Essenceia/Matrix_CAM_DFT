@@ -21,14 +21,15 @@ and diagnosing PCB connection issues.
 
 The goal of the MAC accelerator is to perform a matrix matrix multiplication between the input data
 matric I and the weight matrix W. 
-$$
+```math
 \begin{bmatrix} i_{0,0} & i_{1,0} \\
  i_{0,1} & i_{1,1} 
 \end{bmatrix} 
 
 \times 
 
-\begin{pmatrix} e & f \\ g & h \end{pmatrix} = \begin{pmatrix} ae+bg & af+bh \\ ce+dg & cf+dh \end{pmatrix}$$
+\begin{pmatrix} e & f \\ g & h \end{pmatrix} = \begin{pmatrix} ae+bg & af+bh \\ ce+dg & cf+dh \end{pmatrix}
+```
 
 
 For faster multiplication we are using a booth radix4 algorythme with wallace trees, allowing us to 
