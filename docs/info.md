@@ -78,7 +78,17 @@ This data streaming allows such designs to make more efficient use of data, re-u
 
 ## Usage 
 
-For data transfers to and from the chip the matrixes are faltened in the following order : 
+The typical sequence to outsource matrix operations to the accelerator would go as follows:
+1. Reset the accelerator (necessary on init)
+2. Configure the weights $W$ (can be re-used once configured)
+3. Send the input data $I$
+4. Read the result $R$
+
+This design doesn't feature on-chip SRAM and has limited on-chip memory.
+Given weights have high spatial and temporal locality, this design allows each weight to be configured per MAC unit. This configuration can be reused across multiple matrices.
+The input matrix, on the other hand, is expected to be provided on each usage.
+
+Given our input and output data buses are only 8 bits wide, for data transfers to and from the chip the matrices are flattened in the following order:
 ```
     x                                                                                      
     ─────────────────────►                                                                 
@@ -97,19 +107,9 @@ y │ ┌──────────┬──────────┐
   ▼ └──────────┴──────────┘                                                                
 ```
 
-Notes : 
-- All reference to `cycles` bellow are clocked according to the `clk` pin. 
-- Empty cycles, as in one of more cycles where `data_v_i` would go to low in the middle of
-the transfer of both the input matrix and the weights are supported. 
-
-## Sending data
-
-This design doesn't feature on chip SRAM and has limited on chip memory.
-
-Given weights have high spacial and temporal locallity, this design allows each weight 
-to be configured per mac unit. This configuration can be re-used accross multiple matrixes. 
-
-The intput matrix, on the other hand, is expected to be provided on each usage. 
+Notes:
+- All references to `cycles` below are clocked according to the `clk` pin.
+- Empty cycles, as in one or more cycles where `data_v_i` would go low in the middle of the transfer of both the input matrix and the weights, are supported.
 
 ### Configure weights
 
@@ -119,6 +119,8 @@ Configuring the weights takes 4 data transfer cycles, during which :
 - `data_i[7:0]` contains the weights
 - `data_rst_addr_i` is set to `0`
 
+![weights configuration timing diagram](/docs/wconf.png)
+
 ### Sending the input matrix
 
 Sending the input matrix takes 4 data transfer cycles, during which : 
@@ -126,6 +128,8 @@ Sending the input matrix takes 4 data transfer cycles, during which :
 - `data_mode_i` is set to `1` indicating we are sending the input matrix
 - `data_i[7:0]` contains the input data
 - `data_rst_addr_i` is set to `0`
+
+![data )()
 
 ### Receiving result
 
