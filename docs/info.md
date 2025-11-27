@@ -43,7 +43,7 @@ i_{0,1}w_{0,0}+i_{1,1}w_{0,1} & i_{0,1}w_{1,0}+i_{1,1}w_{1,1}\end{pmatrix}
 ```
 This MAC accelerator has 4 units and from this point on, we will refer to each MAC unit according to their unique $(x,y)$ coordinates. 
 
-Each MAC unit calculates the MAC operation $c_{(x,y)}$, where :
+Each MAC unit calculates the MAC operation $c_{(t,x,y)}$, where :
 - $w_{(x,y)}$ is the fixed weight configured for this unit; this value is fixed throughout a set of $I$ and $W$ input matrices.
 - $i_{(t,y)}$ is a value from the $y$ row of the $I$ matrix that is circulated per timestep $t$ though a row of the matrix.
 - $c_{(t-1,x,y-1)}$ is the result at the previous timestep $t-1$ of the mac unit above this MAC unit, circulated downwards per collum.
@@ -51,20 +51,25 @@ Each MAC unit calculates the MAC operation $c_{(x,y)}$, where :
 c_{(t,x,y)} = i_{(t,y)} \times w_{(x,y)} + c_{(t-1,x,y-1)}
 ```
 
-Given this accelerator was designed to operate on singaled 8 bit integers, but that the sucessifve application of the
-8 bit multiplication and addition push the resulting value up to 17 bits, in order for the size of the base datatype
-needed to represent the result to not explode, we clamp it down back within 8 bit range. 
+Given this accelerator was designed to operate on signed 8-bit integers, 
+but that the successive application of the 8-bit multiplication and addition 
+pushes the resulting value up to 17 bits, in order to prevent the size of the base datatype 
+from increasing with each sucessive MAC operation, we need to clamp it down back within the 8-bit range.
 
-As such, the actual MAC operating adds an $round_i8$ function that remaps :
+As such, the MAC unit performs an additional clamping function $clamp_i8$ that remaps :
 ```math
-c_{(x,y)} = \begin{cases}
-   127 &\text{if }  \\
-   c &\text{if } d
+c_{(t,x,y)} = \begin{cases}
+   127 &\text{if } c_{(t,x,y}) > 127\\
+   c_{(t,x,y)} &\text{if } c_{(t,x,y)} \in [-128,127] \\
+    -128 &\text{if } c_{(t,x,y}) < -128\\
 \end{cases}
 ```
 
-If the result of the MAC operation $c$ exeeds the ranges of the int8, they will be
-clamped to `int8_min` and `int8_max`.
+Our final full MAC operation is as follows : 
+```math
+c_{(t,x,y)} = clamp_i8(i_{(t,y)} \times w_{(x,y)} + c_{(t-1,x,y-1)})
+```
+
 
 For data transfers to and from the chip the matrixes are faltened using the following mapping : 
 ```
