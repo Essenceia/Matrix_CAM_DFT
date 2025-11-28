@@ -16,7 +16,7 @@ This design features two clock trees, one for the MAC and another for the JTAG T
 
 There are currently no known manufacturability issues.
 
-Current status: **Taped-in**, in fabrication
+Current status: **Taped-in**, in fabrication, part of the tiny-tapeout `gf-0p2` shuttle. 
 
 # MAC 
 
@@ -119,6 +119,10 @@ read internal register 0:1 : 0x00 - multiplicand ( input data )
 read internal register 0:2 : 0x00 - summand ( input data )
 ...
 ```
+
+# Credits 
+
+Thanks to the Tiny Tapeout project, its contributors, and all the community working on open source silicon tools for making this possible
 
 # Future improvements 
 
