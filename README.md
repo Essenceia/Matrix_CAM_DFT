@@ -120,6 +120,10 @@ read internal register 0:2 : 0x00 - summand ( input data )
 ...
 ```
 
+## License
+
+This project is licensed under the Apache License 2.0, see the [LICENSE](LICENSE) file for details.
+
 # Credits 
 
 Thanks to the Tiny Tapeout project, its contributors, and all the community working on open source silicon tools for making this possible
