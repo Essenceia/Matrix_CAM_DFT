@@ -1,6 +1,6 @@
 # Multiply and accumulate matrix multiplier ASIC with design for test infrastructure
 
-ASIC design for a $2times2$ systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
+ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
 
 This MAC accelerator operates at up to 50 MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s.
 
