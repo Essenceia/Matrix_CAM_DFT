@@ -1,8 +1,8 @@
 # Multiply and accumulate matrix multiplier ASIC with design for test infrastructure
 
-ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
+ASIC design for a $2times2$ systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
 
-This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s.
+This MAC accelerator operates at up to 50 MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s.
 
 ![ASIC implementation final render](docs/implem.png)
 
@@ -16,21 +16,21 @@ This design features two clock trees, one for the MAC and another for the JTAG T
 
 There are currently no known manufacturability issues.
 
-Current status: taped-in, in fabrication
+Current status: **Taped-in**, in fabrication
 
 # MAC 
 
-This design features 4 MAC units performing a fused multiply and add operation (FMA) on 8-bit signed integers.
+This design features 4 MAC units performing a fused multiply-accumulat operation (FMA) on 8-bit signed integers.
 
 This entire operation is computed in a single cycle at 50 MHz and a single rounding operation to fit into the 8-bit signed integer range is performed on the final operation's results.
 
 ## Frequency 
 
-The 50 MHz speed was chosen according to the maximum estimated reliable IO switching frequency, and going above this would not have resulted in any additional speedup given the IO data transfer and on-chip storage bottlenecks.
+The 50 MHz speed was chosen according to the maximum estimated reliable IO switching frequency. Going above this would not have resulted in any additional speedup given the IO data transfer and on-chip storage bottlenecks.
 
 ## Multiplication
 
-Each unit implements a Booth radix-4 multiplier. This multiplier design was chosen for its low logic depth and reasonable area cost. Additionally, since we are doing signed multiplication, we can remove a level in the Wallace tree we are using for the partial product additions given we only have 4 partial products, unlike the 5 needed for unsigned operations.  
+Each unit implements a Booth radix-4 multiplier. This multiplier design was chosen for its low logic depth and reasonable area cost. Additionally, since we are performing a signed multiplication, we can remove a level in the Wallace tree we are using for the partial product additions given we only have 4 partial products, unlike the 5 needed for unsigned operations.  
 
 ## Data access
 
@@ -61,7 +61,7 @@ All four standard instructions `EXTEST`, `IDCODE`, `SAMPLE_PRELOAD`, `BYPASS` co
 The `USER_REG` state was designed to probe into the data currently used by each of the 4 MAC units.
 The data to be read is specified by loading its address in the data register during a previous `DR_SHIFT` stage. As such, two sequences of `DR_SHIFTS` might be necessary:
 1. Load the address of the next data
-2. Read the data off TDI
+2. Read the data off TDO
 
 The address and data are both `8` bits wide, though only the bottom 4 bits of the address are used.
 
@@ -70,7 +70,7 @@ The address uses the following format:
 ```
 [ unused 7:4 ][ mac unit 3:2 ][ register id 1:0 ] 
 ```
-Register id mapping for this MAC unit gives us the current:
+Register id mapping for each MAC unit gives us the current:
 
 | Register ID | Description |
 |---|---|
@@ -90,7 +90,7 @@ This also applies when doing a boundary scan.
 
 For quickly getting started, use the utilities provided in `jtag/openocd.cfg`.
 
-Given this default config assumes you are using a `jlink`, and this might not be the adapter you are using, you may need to update the adapter sourcing your current probe:
+Given this default config assumes you are using a `jlink`, and this might not be the adapter you are using, you may need to update the adapter by including your probe's config file:
 ```
 source [find interface/jlink.cfg]
 ```
@@ -122,7 +122,7 @@ read internal register 0:2 : 0x00 - summand ( input data )
 
 # Future improvements 
 
-This design was the first iteration for a MAC systolic accelerator. Here are a few paths I have identified for future improvements:
+This design was the first iteration for a systolic MAC accelerator designed from scratch in under 2 weeks. Here are a few paths I have identified for future improvements:
 - Explore floating-point arithmetic
 - Integrate on-chip SRAM to reduce input data bottleneck
 - More directed MAC unit physical layout, with particular attention given to adder tree implementations; experiment with full adder cells
