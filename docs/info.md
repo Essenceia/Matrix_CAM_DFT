@@ -150,7 +150,7 @@ W =
 The implemented JTAG TAP can be used to easily debug the weight matrix configuration sequence as it allows the user using the `USER_REG` instruction to 
 read the currently configured weights for each MAC unit. 
 
-In the existing openocd helper scripts located at `jtag/openocd.cfg` the `read_user_reg` can we used to read the weights using openocd when used as follows : 
+In the existing openocd helper scripts located at `jtag/openocd.cfg` the `read_user_reg` can be used to read the weights using openocd when used as follows : 
 ```tcl
 set r 0
 for {set u 0} {$u <= $USER_REG_UNIT_MAX} {incr u} {
@@ -176,7 +176,7 @@ Sending the input matrix takes 4 data transfer cycles, during which :
 
 #### Example
 
-In this example we are sending the the input data matrix $I$ : 
+In this example we are sending the input data matrix $I$ : 
 ```math
 I = 
 \begin{pmatrix} 
@@ -221,7 +221,7 @@ Internally, the accelerator takes at most 4 cycles to produce a result from inco
 
 This is why, in the firmware (`firmware/main.c`), we set up the DMA stream to receive the data before we start sending the input matrix, as the gap between sending and getting the result is too small for the controlling MCU to perform any type of compute.
 
-![none trivial read sequence](rd_res_complex_waves.png)
+![non-trivial read sequence](rd_res_complex_waves.png)
 
 # DFT 
 
