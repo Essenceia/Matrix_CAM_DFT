@@ -224,7 +224,7 @@ R = I \times W =
 
 #### Complex example 
 
-Internally, the accelerator takes at most 4 cycles to produce a result from incoming data. This accounts for incoming data latching, circulating the data through the entire systolic array, and output streaming. The accelerator moves the incoming data through the array as soon as it is available. Because of this, and since this accelerator supports gaps in the incoming data stream, if the last data transfer of $i_{(1,1)}$.
+Internally, the accelerator takes at most 4 cycles to produce a result from incoming data. This accounts for incoming data latching, circulating the data through the entire systolic array, and output streaming. The accelerator moves the incoming data through the array as soon as it is available. Because of this, and since this accelerator supports gaps in the incoming data stream, if, for example, the last data transfer of $i_{(1,1)}$ ​is delayed by at least 2 cycles, then the accelerator result will start streaming out before all of the input matrix has finished streaming in.
 
 This is why, in the firmware (`firmware/main.c`), we set up the DMA stream to receive the data before we start sending the input matrix, as the gap between sending and getting the result is too small for the controlling MCU to perform any type of compute.
 
