@@ -143,7 +143,7 @@ Configuring the weights takes 4 data transfer cycles, during which :
 
 #### Example 
 
-In this example we are configuring the the weight matrix $W$ to : 
+In this example we are configuring the weight matrix $W$ to : 
 ```math
 W = 
 \begin{pmatrix} 
