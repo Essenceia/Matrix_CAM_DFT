@@ -12,10 +12,9 @@ ASIC design for a 2x2 systolic matrix multiplier supporting multiply and accumul
 operations on int8 data alongside a design for test infrastructure to help debug
 both usage and diagnose design issues in silicon.
 
-
 # MAC 
 
-This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100MAC/s or 200MIOP/s.
+This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100 MAC/s or 200 MIOP/s. 
 
 ## Background 
 
@@ -46,7 +45,7 @@ This MAC accelerator has 4 units and from this point on, we will refer to each M
 Each MAC unit calculates the MAC operation $c_{(t,x,y)}$, where :
 - $w_{(x,y)}$ is the fixed weight configured for this unit; this value is fixed throughout a set of $I$ and $W$ input matrices.
 - $i_{(t,y)}$ is a value from the $y$ row of the $I$ matrix that is circulated per timestep $t$ through a row of the matrix.
-- $c_{(t-1,x,y-1)}$ is the result at the previous timestep $t-1$ of the mac unit above this MAC unit, circulated downwards per column.
+- $c_{(t-1,x,y-1)}$ is the result at the previous timestep $t-1$ of the MAC unit above this MAC unit, circulated downwards per column.
 ```math
 c_{(t,x,y)} = i_{(t,y)} \times w_{(x,y)} + c_{(t-1,x,y-1)}
 ```
@@ -76,7 +75,7 @@ At each MAC timestep $t+1$ :
 
 This data streaming allows such designs to make more efficient use of data, re-using it multiple times as the data circulates through the array, contributing to the final results without spending time on expensive data accesses, allowing us to dedicate more of our silicon area and cycles to compute.
 
-## Thoughput
+## Throughput
 
 Assuming a pre-configured $W$ weight matrix is being reused and the accelerator is receiving a gapless stream of multiple $I$ input matrices, this MAC accelerator is capable of computing up to 100 MMAC/s or 200 MIOPS/s.
 
@@ -85,7 +84,7 @@ Assuming a pre-configured $W$ weight matrix is being reused and the accelerator 
 Accelerator operations are stalled if a MAC operation has a data dependency on data that has yet to arrive. For example, calculating $r_{(0,0)}$ depends on both $i_{(0,0)}$​ and $i_{(1,0)}$​.
 In practice, each operation depends on two pieces of input data, yet our input interface being only 8 bits wide allows us to transfer only a single $i_{(x,y)}$​ per cycle.
 
-This limitation means our accelerator is actually operating at half maximum capacity due to this IO bottleneck. If the IO interface were either (a) at least 16 bits wide, or (b) 8 bits wide but operating at 100 MHz, resolving this bottleneck, our maximum throughput would be 200 MMAC/s or 400 MIOPS/s
+This limitation means our accelerator is actually operating at half maximum capacity due to this IO bottleneck. If the IO interface were either (a) at least 16 bits wide, or (b) 8 bits wide but operating at 100 MHz, resolving this bottleneck, our maximum throughput would be 200 MMAC/s or 400 MIOPS/s.
 
 ## Usage 
 
@@ -194,13 +193,7 @@ When receiving a result the asic will drive the following pins during
 - `res_v_o` is set to `1`
 - `res_o[7:0]` contains the result of the MAC operation for a single matrix coordinate
 
-Internally, the accelerator takes at most 4 cycles to produce a result operate on incomming data, this accounts for incomming data latching and circulating the data though the entire systolic array and output streaming. The accelerator moves the incomming data though the array as soon as it is available. Because of this, and since this accelerator supports gaps in the incomming data if that last data transfer of $i_{(1,1)}$ is delayed by at least 2 cycles, then the accelerator result will start streaming out before all of the input matrix has finished streaming in. 
-
-
-If the user sends a gapless, uninterupted stream of input data, and re-uses the same weights, this accelerator is capable of up to 100MMAC/s or 200MIOPS/s. 
-
-
-#### Simlpe example
+#### Simple example
 
 In this example the $W$ MAC weight matrix is being configured and the $I$ data is being streamed in, following which, the $R$ result starts being sent out. 
 ```math
