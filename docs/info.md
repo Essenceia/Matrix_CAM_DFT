@@ -38,7 +38,15 @@ w_{0,1} & w_{1,1}
 \begin{pmatrix} 
 i_{0,0}w_{0,0}+i_{1,0}w_{0,1} & i_{0,0}w_{1,0}+i_{1,0}w_{1,1}\\ 
 i_{0,1}w_{0,0}+i_{1,1}w_{0,1} & i_{0,1}w_{1,0}+i_{1,1}w_{1,1}\end{pmatrix}
+
+=
+
+\begin{pmatrix} 
+r_{0,0} & r_{1,0} \\ 
+r_{0,1} & r_{1,1} 
+\end{pmatrix}
 \end{gather}
+
 ```
 This MAC accelerator has 4 units and from this point on, we will refer to each MAC unit according to their unique $(x,y)$ coordinates. 
 
