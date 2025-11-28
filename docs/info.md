@@ -89,27 +89,31 @@ Given weights have high spatial and temporal locality, this design allows each w
 The input matrix, on the other hand, is expected to be provided on each usage.
 
 Given our input and output data buses are only 8 bits wide, for data transfers to and from the chip the matrices are flattened in the following order:
-```
-    x                                                                                      
-    ─────────────────────►                                                                 
-y │ ┌──────────┬──────────┐                                                                
-  │ │          │          │                                                                
-  │ │          │          │                                                                
-  │ │   0,0    │    1,0   │                  ┌──────────┬──────────┬──────────┬──────────┐ 
-  │ │          │          │                  │          │          │          │          │ 
-  │ │          │          │                  │          │          │          │          │ 
-  │ ├──────────┼──────────┤     ───────►     │   0,0    │    1,0   │   0,1    │    1,1   │ 
-  │ │          │          │                  │          │          │          │          │ 
-  │ │          │          │                  │          │          │          │          │ 
-  │ │   0,1    │    1,1   │                  └──────────┴──────────┴──────────┴──────────┘ 
-  │ │          │          │                   ────────────────────────────────────────────►
-  │ │          │          │                   t                                            
-  ▼ └──────────┴──────────┘                                                                
-```
+
+![flattened](flat.svg)
 
 Notes:
 - All references to `cycles` below are clocked according to the `clk` pin.
 - Empty cycles, as in one or more cycles where `data_v_i` would go low in the middle of the transfer of both the input matrix and the weights, are supported.
+  
+### Resetting MAC 
+
+Given we are not sending an index alongside each data transfer to indicate which weight/data corrdinates ( index ) each data corresponds to, 
+the MAC accelerator keeps track of the next index internaly. As such, if due to external reasons a partial transfer occures, it becomes necessary 
+to reset this index using the reset sequence described bellow. 
+
+The weights streaming indexes and the data streaming indexes can be reset independantly, each requires a single data
+transfer cycle during which : 
+- `data_v_i` is set to `1`
+- `data_mode_i` is set to `0` if we are resetting the `weights` indexes, `0` to reset the data indexes
+- `data_i[7:0]` is ignored
+- `data_rst_addr_i` is set to `1`
+
+#### Example
+
+In this example we are resetting both the data streaming index and the weight index back to back. 
+
+![rst configuration timing diagram](rst_waves.png)
 
 ### Configure weights
 
@@ -119,7 +123,37 @@ Configuring the weights takes 4 data transfer cycles, during which :
 - `data_i[7:0]` contains the weights
 - `data_rst_addr_i` is set to `0`
 
-![weights configuration timing diagram](/docs/wconf.png)
+#### Example 
+
+In this example we are configuring the the weigth matrix $W$ to : 
+```math
+W = 
+\begin{pmatrix} 
+0 & 1 \\ 
+2 & 3 
+\end{pmatrix} 
+```
+![weights configuration timing diagram](wr_weights_waves.png)
+
+#### Debug
+
+The implemented JTAG TAP can be used to easily debug the weight matrix configuration sequence as it allows the user using the `USER_REG` instruction to 
+read the currently configured weights for each MAC unit. 
+
+In the existing openocd helper scripts located at `jtag/openocd.cfg` the `read_user_reg` can we used to read the weights using openocd when used as follows : 
+```tcl
+for {set u 0} {$u <= $USER_REG_UNIT_MAX} {incr u} {
+    puts "read internal register $u : 0x[read_user_reg $_CHIPNAME $u 0] - [print_reg_id $r]"  
+}
+```
+
+For the $W$ weight matrix configured in the example above, the expected output should be : 
+```
+read internal register 0 : 0x00 - weight
+read internal register 1 : 0x01 - weight
+read internal register 2 : 0x02 - weight
+read internal register 3 : 0x03 - weight
+```
 
 ### Sending the input matrix
 
@@ -129,7 +163,17 @@ Sending the input matrix takes 4 data transfer cycles, during which :
 - `data_i[7:0]` contains the input data
 - `data_rst_addr_i` is set to `0`
 
-![data )()
+#### Example
+
+In this example we are sending the the input data matrix $I$ : 
+```math
+W = 
+\begin{pmatrix} 
+4 & 5 \\ 
+6 & 7 
+\end{pmatrix} 
+```
+![data configuration timing diagram](wr_data_waves.png)
 
 ### Receiving result
 
@@ -138,4 +182,25 @@ When receiving a result the asic will drive the following pins during
 - `res_v_o` is set to `1`
 - `res_o[7:0]` contains to result of the MAC operating for a single matrix coordinate
 
+#### Example
+
+In this example the $W$ MAC weight matrix is being configured and the $I$ data is being streamed in, following which, the $R$ result starts being sent out. 
+```math
+R = I \times W = 
+\begin{pmatrix} 
+4 & 5 \\ 
+6 & 7 
+\end{pmatrix}
+\times
+\begin{pmatrix} 
+0 & 1 \\ 
+2 & 3 
+\end{pmatrix}
+=
+\begin{pmatrix} 
+10 & 19 \\ 
+14 & 27
+\end{pmatrix}
+```
+![result streamout](rd_res_waves.png)
 
