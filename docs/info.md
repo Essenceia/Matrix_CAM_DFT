@@ -14,7 +14,7 @@ both usage and diagnose design issues in silicon.
 
 # MAC 
 
-This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100 MAC/s or 200 MIOP/s. 
+This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s. 
 
 ## Background 
 
@@ -222,3 +222,85 @@ Internally, the accelerator takes at most 4 cycles to produce a result from inco
 This is why, in the firmware (`firmware/main.c`), we set up the DMA stream to receive the data before we start sending the input matrix, as the gap between sending and getting the result is too small for the controlling MCU to perform any type of compute.
 
 ![none trivial read sequence](rd_res_complex_waves.png)
+
+# DFT 
+
+This design embeds a JTAG for debugging the accelerator's usage by probing into internal registers and helping identify PCB issues using a boundary scan.
+
+This JTAG TAP was designed to operate at `2 MHz`, has idcode `0x1beef0d7`.
+
+Its instruction register length is `3`, and implements the following instructions:
+
+| Instruction | Opcode | Description |
+|---|---|---|
+| `EXTEST` | `0x0` | Boundary scan |
+| `IDCODE` | `0x1` | Reads JTAG TAP identifier |
+| `SAMPLE_PRELOAD` | `0x2` | Boundary scan |
+| `USER_REG` | `0x3` | Probe internal registers |
+| `BYPASS` | `0x7` | Set the TAP in bypass mode |
+
+All four standard instructions `EXTEST`, `IDCODE`, `SAMPLE_PRELOAD`, `BYPASS` conform to the standard behavior.
+
+## `USER_REG`
+
+The `USER_REG` state was designed to probe into the data currently used by each of the 4 MAC units.
+The data to be read is specified by loading its address in the data register during a previous `DR_SHIFT` stage. As such, two sequences of `DR_SHIFTS` might be necessary:
+1. Load the address of the next data
+2. Read the data off TDI
+
+The address and data are both `8` bits wide, though only the bottom 4 bits of the address are used.
+
+### Address format
+The address uses the following format:
+```
+[ unused 7:4 ][ mac unit 3:2 ][ register id 1:0 ] 
+```
+Register id mapping for this MAC unit gives us the current:
+
+| Register ID | Description |
+|---|---|
+| `0x0` | Weight (multiplier) |
+| `0x1` | Multiplicand (circulated data) |
+| `0x2` | Summand (circulated data) |
+| `0x3` | MAC operation overflow bits, used in rounding to the maximum representation range of the `int8_t`, discarded before the next MAC unit (internal MAC unit data) |
+
+## Important considerations for usage 
+
+When using the USER_REG custom JTAG TAP instruction, the MAC logic is expected to be temporarily halted, as in no weight or data update operations and no matrix compute is expected to be ongoing.
+To this effect, there is no CDC protection when transferring data between the JTAG clock domain and the MAC domain. If the MAC isn't halted, the resulting metastability risks corrupting the sampled data.
+
+This also applies when doing a boundary scan.
+
+## Quickstart
+
+For quickly getting started, use the utilities provided in `jtag/openocd.cfg`.
+
+Given this default config assumes you are using a `jlink`, and this might not be the adapter you are using, you may need to update the adapter sourcing your current probe:
+```
+source [find interface/jlink.cfg]
+```
+
+### Usage 
+Run using : 
+```
+openocd -f jtag/openocd.cfg
+```
+
+Expected output:
+```
+Open On-Chip Debugger 0.12.0+dev-02171-g11dc2a288 (2025-11-23-19:25)
+Licensed under GNU GPL v2
+For bug reports, read
+	http://openocd.org/doc/doxygen/bugs.html
+Info : J-Link V10 compiled Jan 30 2023 11:28:07
+Info : Hardware version: 10.10
+Info : VTarget = 3.380 V
+Info : clock speed 2000 kHz
+Info : JTAG tap: tpu.tap tap/device found: 0x1beef0d7 (mfg: 0x06b (Transwitch), part: 0xbeef, ver: 0x1)
+Warn : gdb services need one or more targets defined
+idcode : 1beef0d7
+read internal register 0:0 : 0x00 - weight
+read internal register 0:1 : 0x00 - multiplicand ( input data )
+read internal register 0:2 : 0x00 - summand ( input data )
+...
+```
