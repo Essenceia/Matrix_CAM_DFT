@@ -12,6 +12,23 @@ ASIC design for a 2x2 systolic matrix multiplier supporting multiply and accumul
 operations on int8 data alongside a design for test infrastructure to help debug
 both usage and diagnose design issues in silicon.
 
+# Pinout 
+
+This accelerator uses the following pinout:
+
+| ui (Inputs)       | uo (Outputs)     | uio (Bidirectional)      |
+| ----------------- | ---------------- | ------------------------ |
+| ui[0] = tck       | uo[0] = result_o | uio[0] = data_i[7]       |
+| ui[1] = data_i[0] | uo[1] = result_o | uio[1] = data_valid_i    |
+| ui[2] = data_i[1] | uo[2] = result_o | uio[2] = data_mode_i     |
+| ui[3] = data_i[2] | uo[3] = result_o | uio[3] = data_rst_addr_i |
+| ui[4] = data_i[3] | uo[4] = result_o | uio[4] = tdi             |
+| ui[5] = data_i[4] | uo[5] = result_o | uio[5] = tms             |
+| ui[6] = data_i[5] | uo[6] = result_o | uio[6] = tdo             |
+| ui[7] = data_i[6] | uo[7] = result_o | uio[7] = result_v_o      |
+ 
+![Chip pinout](chip.svg) 
+
 # MAC 
 
 This MAC accelerator operates at up to 50MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s. 
