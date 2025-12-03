@@ -4,9 +4,10 @@ ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply an
 
 This MAC accelerator operates at up to 50 MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s.
 
+**Documentation on using this accelerator can be found : [here](docs/info.md)**
+
 ![ASIC implementation final render](docs/implem.png)
 
-Documentation on using this accelerator can be found : [here](docs/info.md)
 
 # ASIC 
 
