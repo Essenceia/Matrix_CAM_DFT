@@ -1,32 +1,30 @@
-"""
+'''
 Created on Jan 9, 2024
 
 Code here, in main.py, runs on every power-up.
 
-You can put anything you like in here, including any utility functions
-you might want to have access to when connecting to the REPL.
+You can put anything you like in here, including any utility functions 
+you might want to have access to when connecting to the REPL.  
 
 If you want to use the SDK, all
 you really need is something like
+      
+      DemoboardDetect.probe()
+      tt = DemoBoard.get()
 
-          DemoboardDetect.probe()
-          tt = DemoBoard.get()
-
-Then you can
-        # enable test project
-        tt.shuttle.tt_um_factory_test.enable()
+Then you can 
+    # enable test project
+    tt.shuttle.tt_um_factory_test.enable()
 
 and play with i/o as desired.
 
 @author: Pat Deegan
 @copyright: Copyright (C) 2024 Pat Deegan, https://psychogenic.com
-"""
-
+'''
 print("BOOT: Tiny Tapeout SDK")
 import gc
-import test
 
-# stash the current value for garbage
+# stash the current value for garbage 
 # collection threshold (is -1/when full, by default)
 GCThreshold = gc.threshold()
 # start very aggressive, to keep thing defragged
@@ -34,10 +32,9 @@ GCThreshold = gc.threshold()
 gc.threshold(80000)
 
 import ttboard.log as logging
-
 # logging.ticksStart() # start-up tick delta counter
 
-logging.basicConfig(level=logging.INFO, filename="boot.log")
+logging.basicConfig(level=logging.DEBUG, filename='boot.log')
 
 
 import micropython
@@ -50,8 +47,6 @@ import ttboard.util.colors as colors
 gc.collect()
 
 tt = None
-
-
 def startup():
     # construct DemoBoard
     # either pass an appropriate RPMode, e.g. RPMode.ASIC_RP_CONTROL
@@ -60,48 +55,34 @@ def startup():
     print("\n\n")
     print(f"The '{colors.color('tt', 'red')}' object is available.")
     print()
-    print(
-        f"Projects may be enabled with {colors.bold('tt.shuttle.PROJECT_NAME.enable()')}, e.g."
-    )
+    print(f"Projects may be enabled with {colors.bold('tt.shuttle.PROJECT_NAME.enable()')}, e.g.")
     print("tt.shuttle.tt_um_urish_simon.enable()")
     print()
-    print(
-        f"The io ports are named as in Verilog, {colors.bold('tt.ui_in')}, {colors.bold('tt.uo_out')}..."
-    )
-    print(
-        f"and behave as with cocotb, e.g. {colors.bold('tt.uo_out.value = 0xAA')} or {colors.bold('print(tt.ui_in.value)')}"
-    )
-    print(
-        f"Bits may be accessed by index, e.g. {colors.bold('tt.uo_out[7]')} (note: that's the {colors.color('high bit!', 'red')}) to read or {colors.bold('tt.ui_in[5] = 1')} to write."
-    )
-    print(
-        f"Direction of the bidir pins is set using {colors.bold('tt.uio_oe_pico')}, used in the same manner as the io ports themselves."
-    )
+    print(f"The io ports are named as in Verilog, {colors.bold('tt.ui_in')}, {colors.bold('tt.uo_out')}...")
+    print(f"and behave as with cocotb, e.g. {colors.bold('tt.uo_out.value = 0xAA')} or {colors.bold('print(tt.ui_in.value)')}")
+    print(f"Bits may be accessed by index, e.g. {colors.bold('tt.uo_out[7]')} (note: that's the {colors.color('high bit!', 'red')}) to read or {colors.bold('tt.ui_in[5] = 1')} to write.")
+    print(f"Direction of the bidir pins is set using {colors.bold('tt.uio_oe_pico')}, used in the same manner as the io ports themselves.")
     print("\n")
     print(f"{colors.color('TT SDK v' + ttdemoboard.version, 'cyan')}")
     print("\n\n")
     gc.collect()
     return ttdemoboard
 
-
-def autoClockProject(freqHz: int):
+def autoClockProject(freqHz:int):
     tt.clock_project_PWM(freqHz)
-
-
+    
 def stopClocking():
     tt.clock_project_stop()
 
 
 # Detect the demoboard version
-detection_result = "(best guess)"
-detection_color = "red"
+detection_result = '(best guess)'
+detection_color = 'red'
 if DemoboardDetect.probe():
     # detection was conclusive
-    detection_result = ""
-    detection_color = "cyan"
-detection_message = (
-    "Detected " + DemoboardDetect.PCB_str() + " demoboard " + detection_result
-)
+    detection_result = ''
+    detection_color = 'cyan'
+detection_message = 'Detected ' + DemoboardDetect.PCB_str() + ' demoboard ' + detection_result
 print(f"{colors.color(detection_message, detection_color)}")
 
 
@@ -110,7 +91,7 @@ tt = startup()
 
 logging.basicConfig(filename=None)
 gc.collect()
-colors.color_start("magenta", False)
+colors.color_start('magenta', False)
 print("Mem info")
 micropython.mem_info()
 colors.color_end()
@@ -119,37 +100,32 @@ colors.color_end()
 print(tt)
 print()
 
-logging.dumpTicksMsDelta("boot done")
+logging.dumpTicksMsDelta('boot done')
 print(f"tt.sdk_revision={tt.revision}")
 print(f"tt.sdk_version={tt.version}")
 # end by being so aggressive on collection
 gc.threshold(GCThreshold)
 
-
-def enable_essen():
-    from ttboard.demoboard import DemoBoard, RPMode
-
-    tt = DemoBoard.get()
-    print("Got shuttle chip:")
-    print(tt.shuttle)
-    if not tt.shuttle.has("tt_um_essen"):
-        print("No tt_um_essen this shuttle - fail")
-        return
-
-    tt.shuttle.tt_um_essen.enable()
-    if tt.mode != RPMode.ASIC_RP_CONTROL:
-        print("Setting mode to ASIC_RP_CONTROL")
-        tt.mode = RPMode.ASIC_RP_CONTROL
-
-    # oe enable values
-    tt.uio_oe_pico.value = 0b11000000
-    print(f"oe enabled to: {tt.uio_oe_pico}")
-    print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
+# to run tests easily import a module of interest, as below, and then 
+# run() it
 
 
-#enable_essen()
-#runner, dut = test.start_cocotb(tt)
-print("Test finished") 
-
-while true:
-	print("hello") 
+def run_testbench_basic():
+    import microcotb
+    import examples.basic as test 
+    test.run()
+    return test 
+    
+def run_testbench_factorytest():
+    import microcotb
+    import examples.tt_um_factory_test as test 
+    runner = test.run()
+    err_msgs = []
+    for atest in runner.tests_to_run.values():
+        if atest.failed:
+            err_msgs.append(f'{atest.name} failed: {atest.failed_msg}')
+    if len(err_msgs):
+        err_str = "\n\t".join(err_msgs)
+        print(f'{len(err_msgs)}/{len(runner.tests_to_run)} test failures:\n\t{err_str}')
+        print()
+    return test
