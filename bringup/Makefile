@@ -17,7 +17,10 @@ picocom:
 	echo "Exit Ctrl-A + Ctrl-Q" 
 	picocom -q /dev/ttyACM0	
 
+format:
+	black .
+
 clean: 
 	rm -f ./boot.log
 
-.PHONY: venv cp_main log clean picocom 
+.PHONY: venv cp_main log clean picocom format

@@ -6,6 +6,8 @@ from microcotb.clock import Clock
 from microcotb.triggers import ClockCycles
 import microcotb as cocotb
 
+from ttboard.demoboard import DemoBoard
+
 import random
 import mac_utils
 import asyncio
@@ -21,7 +23,7 @@ MAX_I = 127
 
 
 def start_clk(dut):
-    clock = Clock(dut.clk, 10, unit="us")
+    clock = Clock(dut.clk, 10, units="us")
     cocotb.start_soon(clock.start())  # runs the clock "in the background"
 
 
@@ -78,7 +80,7 @@ async def compare_res(dut, W, I):
 
 
 # MAC tests
-
+cocotb.set_runner_scope(__name__)
 
 @cocotb.test()
 async def simple_mac_test(dut):
@@ -161,8 +163,6 @@ def start_cocotb(tt):
             super().__init__("SystolicArrayTest")
             self.tt = DemoBoard.get()
 
-    TimeValue.ReBaseStringUnits = True  # I like pretty strings
-
     runner = cocotb.get_runner(__name__)
 
     dut = DUT()
@@ -170,4 +170,4 @@ def start_cocotb(tt):
 
     runner.test(dut)
 
-    return runner
+    return runner, dut

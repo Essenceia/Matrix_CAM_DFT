@@ -37,7 +37,7 @@ import ttboard.log as logging
 
 # logging.ticksStart() # start-up tick delta counter
 
-logging.basicConfig(level=logging.DEBUG, filename="boot.log")
+logging.basicConfig(level=logging.INFO, filename="boot.log")
 
 
 import micropython
@@ -147,5 +147,9 @@ def enable_essen():
     print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
 
 
-enable_essen()
-test.start_cocotb(tt)
+#enable_essen()
+#runner, dut = test.start_cocotb(tt)
+print("Test finished") 
+
+while true:
+	print("hello") 
