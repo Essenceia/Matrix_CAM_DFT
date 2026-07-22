@@ -1,4 +1,10 @@
+BOOT: BOOT: Tiny Tapeout SDK
 BOOT: Setting all RP GPIO to INPUTS
 BOOT: ctrl lines pulled to indicate TT carrier present on board
 BOOT: TTDBv3 demoboard with carrier present
 BOOT: Setting GPIOMap to <class 'GPIOMapTTDBv3'>
+BOOT: Detected TTDBv3
+BOOT: Startup start
+BOOT: Startup end
+BOOT: Mem info
+BOOT: tt is none

@@ -57,9 +57,8 @@ def get_cmd(valid=True, mode=False, rst=False, tdi=False, tms=False):
     return ret
 
 
-def stou(n):
-    return int.from_bytes(n.to_bytes(1, "little", signed=True), "little", signed=False)
-
+def mac_utils_stou(n):
+    return int.from_bytes(n.to_bytes(1, "little", True), "little", False)
 
 # Configure weight values.
 #
@@ -76,7 +75,7 @@ async def write_config(dut, X, weight=True):
     config = bytearray(0)
     for x in X:
         assert x >= -128 and x <= 127
-        config.append(stou(x))
+        config.append(mac_utils_stou(x))
 
     for i in range(0, N * N):
         if random.randrange(0, 100) > 75:
@@ -84,7 +83,7 @@ async def write_config(dut, X, weight=True):
         dut.ui_in.value = (config[i] << 1) & 0xFE
         uio_in = get_cmd(valid=True, mode=weight) | (config[i] >> 7 & 0x01)
         dut.uio_in.value = uio_in
-        cocotb.log.debug("write config %d:%s %s", i, config[i], uio_in)
+        dut._log.info(f"write config {i}:{config[i]} {uio_in}")
         await ClockCycles(dut.clk, 1)
     dut.uio_in.value = 0
 
