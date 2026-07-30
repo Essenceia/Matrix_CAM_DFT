@@ -52,6 +52,7 @@ async def write_data(dut, log, D) -> R:
 			res.append(x)
 
 		b = b+1 # bail condition to prevent deadlooping
+		await ClockCycles(dut.clk, 1)
 
 	if (b == 100):
 		log.error("Timeout waiting for response")
