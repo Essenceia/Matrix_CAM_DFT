@@ -162,6 +162,25 @@ async def random_mac_reuse_weights_test(dut):
             await write_task
             await comp_task
 
+@cocotb.test()
+async def interactive_mode_code(dut):
+	await interactive.init(dut)
+	
+    W = array("b", [0, 1, 2, 3])
+    I = array("b", [4, 5, 6, 7])
+
+	await interactive.write_weights(dut, cocotb.log, W)
+	res = await interactive.write_data(dut,cocotb.log, I) 
+
+    expected = mac(W, I)
+
+    cocotb.log.info("expected vs got :")
+    cocotb.log.info(" ".join(map(str, expected)))
+    cocotb.log.info(" ".join(map(str, res)))
+
+    assert res == expected
+
+	
 
 # JTAG tests
 # read out idcode
