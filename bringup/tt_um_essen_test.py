@@ -65,7 +65,7 @@ def run_test(dut):
 	I = array("b", [4, 5, 6, 7])
 
 	await interactive.write_weights(dut, dut._log, W)
-	res = await interactive.write_data(dut,dut.log, I) 
+	res = await interactive.write_data(dut,dut._log, I) 
 
 	print(f"result {res}")
 
