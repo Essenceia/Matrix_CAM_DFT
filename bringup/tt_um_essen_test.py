@@ -59,8 +59,8 @@ def enable_essen():
 	print(f"oe enabled to: {tt.uio_oe_pico}")
    	print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
 
-	# set clk to open drain 
-	tt.clk = Pin(16, Pin.OPEN_DRAIN)
+	# set clk floating
+	tt.pins.rp_projclk.mode = Pin.IN	
 	
 	return tt
 
