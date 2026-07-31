@@ -73,7 +73,3 @@ else:
 	log.debug("tt is none") 
 
 gc.collect()
-
-# to run tests easily import a module of interest, as below, and then 
-# run() it
-
