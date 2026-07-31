@@ -32,8 +32,9 @@ import ttboard.util.colors as colors
 import interactive
 from array import array
 import microcotb as cocotb
+from ttboard.pins.pins import Pins
 
-def enable_essen(tt):
+def enable_essen():
 	from ttboard.demoboard import DemoBoard, RPMode
 
 	tt = DemoBoard.get()
@@ -48,14 +49,13 @@ def enable_essen(tt):
 		print("Setting mode to ASIC_RP_CONTROL")
 		tt.mode = RPMode.ASIC_RP_CONTROL
 
-	tt.reset_project(False)
+	#tt.reset_project(False)
  
 	# oe enable values
 	tt.uio_oe_pico.value = 0b11000000
 	print(f"oe enabled to: {tt.uio_oe_pico}")
    	print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
 	return tt
-
 
 cocotb.set_runner_scope(__name__)
 @cocotb.test()
@@ -71,16 +71,18 @@ def run_test(dut):
 
 import ttboard.cocotb.dut as basedut
 class DUT(basedut.DUT):
-	def __init__(self):
-		super().__init__('tt_um_essen_test')
+	def __init__(self, tt):
+		super().__init__('essen')
+		self.tt = tt
+		self.tt.rst_n.mode = Pins.OUT
 
-def start_interactive(tt):
-	tt = enable_essen(tt)
+def start_interactive():
+	tt = enable_essen()
 	print("Interactive init finished and project set")
 
 	runner = cocotb.get_runner(__name__)
 	
-	dut = DUT()
+	dut = DUT(tt)
 	dut._log.info("start test")
 	runner = cocotb.get_runner(__name__)
 	runner.test(dut)
