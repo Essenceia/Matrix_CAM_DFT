@@ -48,6 +48,8 @@ def enable_essen(tt):
 		print("Setting mode to ASIC_RP_CONTROL")
 		tt.mode = RPMode.ASIC_RP_CONTROL
 
+	tt.reset_project(False)
+ 
 	# oe enable values
 	tt.uio_oe_pico.value = 0b11000000
 	print(f"oe enabled to: {tt.uio_oe_pico}")
@@ -63,7 +65,7 @@ def run_test(dut):
 	I = array("b", [4, 5, 6, 7])
 
 	await interactive.write_weights(dut, dut._log, W)
-	res = await interactive.write_data(dut,dut._log, I) 
+	res = await interactive.write_data(dut,dut.log, I) 
 
 	print(f"result {res}")
 
