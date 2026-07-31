@@ -32,7 +32,7 @@ import ttboard.util.colors as colors
 import interactive
 from array import array
 import microcotb as cocotb
-from ttboard.pins.pins import Pins
+from machine import Pin
 
 def enable_essen():
 	from ttboard.demoboard import DemoBoard, RPMode
@@ -49,7 +49,7 @@ def enable_essen():
 		print("Setting mode to ASIC_RP_CONTROL")
 		tt.mode = RPMode.ASIC_RP_CONTROL
 
-	#tt.reset_project(False)
+	tt.reset_project(True)
  
 	# oe enable values
 	tt.uio_oe_pico.value = 0b11000000
@@ -58,6 +58,10 @@ def enable_essen():
 	print(f"tt.sdk_version={tt.version}")
 	print(f"oe enabled to: {tt.uio_oe_pico}")
    	print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
+
+	# set clk to open drain 
+	tt.clk = Pin(16, Pin.OPEN_DRAIN)
+	
 	return tt
 
 cocotb.set_runner_scope(__name__)
