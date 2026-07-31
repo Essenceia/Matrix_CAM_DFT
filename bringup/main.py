@@ -30,13 +30,8 @@ import ttboard.log as logging
 logging.ticksStart() # start-up tick delta counter
 logging.basicConfig(level=logging.DEBUG, filename='boot.log')
 
-
-import micropython
-
 from ttboard.boot.demoboard_detect import DemoboardDetect
 from ttboard.demoboard import DemoBoard
-
-import ttboard.util.colors as colors
 
 gc.collect()
 gc.threshold(GCThreshold)
@@ -52,24 +47,5 @@ if DemoboardDetect.probe():
     log.info('Detected ' + DemoboardDetect.PCB_str())
 else:
     log.error('Hm, could not figure out the DB/shuttle?')
-
-log.debug("Startup start") 
-#tt = DemoBoard.get()
-log.debug("Startup end") 
-gc.collect()
-
-colors.color_start('magenta', False)
-log.debug("Mem info")
-micropython.mem_info()
-colors.color_end()
-
-
-if tt is not None:
-	log.debug(tt)
-	logging.dumpTicksMsDelta('boot done')
-	log.debug(f"tt.sdk_revision={tt.revision}")
-	log.debug(f"tt.sdk_version={tt.version}")
-else: 
-	log.debug("tt is none") 
 
 gc.collect()

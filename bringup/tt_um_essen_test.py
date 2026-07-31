@@ -53,6 +53,9 @@ def enable_essen():
  
 	# oe enable values
 	tt.uio_oe_pico.value = 0b11000000
+
+	print(f"tt.sdk_revision={tt.revision}")
+	print(f"tt.sdk_version={tt.version}")
 	print(f"oe enabled to: {tt.uio_oe_pico}")
    	print(f"tt_um_essen configured with options: {tt.shuttle.tt_um_essen}")
 	return tt
@@ -73,8 +76,8 @@ import ttboard.cocotb.dut as basedut
 class DUT(basedut.DUT):
 	def __init__(self, tt):
 		super().__init__('essen')
-		self.tt = tt
-		self.tt.rst_n.mode = Pins.OUT
+		#self.ttt = tt
+		#self.ttt.rst_n.mode = Pins.OUT
 
 def start_interactive():
 	tt = enable_essen()

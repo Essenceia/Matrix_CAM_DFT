@@ -3,16 +3,19 @@ import mac_utils
 from array import array
 import microcotb as cocotb
 from microcotb.triggers import ClockCycles
-
+from microcotb.clock import Clock
 from ttboard.pins.pins import Pins
+
 async def init(dut): 
+	clock = Clock(dut.clk, 10, units="ms")
+	cocotb.start_soon(clock.start())
 	# rst 
-	dut.tt.rst_n(0)
-	dut.tbessen.ui_in.value = 0
-	dut.tbessen.uio_in.value = 0
-	await ClockCycles(dut.tbessen.clk, 10)
-	dut.tt.rst_n(1)
-	await ClockCycles(dut.tbessen.clk, 10)
+	dut.rst_n.value = 0
+	dut.ui_in.value = 0
+	dut.uio_in.value = 0
+	await ClockCycles(dut.clk, 10)
+	dut.rst_n.value = 1
+	await ClockCycles(dut.clk, 10)
 	# reset address data
 	await mac_utils.rst_data_addr(dut)
 	
