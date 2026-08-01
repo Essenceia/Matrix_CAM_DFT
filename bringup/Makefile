@@ -5,9 +5,6 @@ venv:
 flash:
 	mpremote fs cp main.py :/main.py
 	mpremote fs cp tt_um_essen_test.py :/tt_um_essen_test.py
-	mpremote fs cp interactive.py :/interactive.py
-	mpremote fs cp mac_utils.py :/mac_utils.py
-	mpremote fs cp test.py :/test.py
 	mpremote reset
 
 reset:	
