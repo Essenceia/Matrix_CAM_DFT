@@ -2,6 +2,8 @@
 
 Status: **A0 WORKS!**
 
+![closeup](closeup.jpg) 
+
 ## JTAG
 
 ![workbench](bringup.webp)
