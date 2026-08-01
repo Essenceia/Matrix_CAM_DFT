@@ -53,7 +53,7 @@ Info : Listening on port 4444 for telnet connections
 
 Because we need more probes : 
 
-![more probes](more_probes.png)
+![more probes](more_probes.jpg)
 
 ### Setup TT daughter board 
 
