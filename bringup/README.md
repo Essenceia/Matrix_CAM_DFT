@@ -1,8 +1,10 @@
 # Silicon bringup 
 
-![workbench](bringup.webp)
+Status: **A0 WORKS!**
 
 ## JTAG
+
+![workbench](bringup.webp)
 
 JTAG TAP just works !? 
 
@@ -45,3 +47,72 @@ Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
 
+## Systolic Array 
+
+![probes](/docs/probe_forest.webp)
+
+Because we need more probes : 
+
+![more probes](more_probes.png)
+
+### Setup TT daughter board 
+
+To configure TT mux, after plugging in the daughter board : 
+```
+make flash
+```
+
+Open TTY on board: 
+```
+make picocom
+```
+
+Setup project: 
+```
+import tt_um_essen_test
+tt = tt_um_essen_test.enable_essen()
+```
+
+You want to be extra sure `rst_n` is pulled high and `tt.mode` is set to `ASIC_MANUAL_INPUTS`: 
+```
+tt.reset_project(False)
+from ttboard.demoboard import RPMode
+tt.mode = RPMode.ASIC_MANUAL_INPUTS
+```
+### Connect external rpi 
+
+We will be driving this ASIC over Pmod from an external rp2040 board, wiring as follows: 
+
+![wiring](rpi_pinout.jpg)
+
+Firmware is in the `firmware` folder. 
+
+### ASIC in action 
+
+Example of ASIC in action:
+
+We are using the 2x2 matrix for data and weights `{0,2,0,2}`.
+
+We can confirm the weights that are written internally in the ASIC by probing over JTAG: 
+```
+read internal register 0:0 : 0x00 - weight                            <--- 0
+read internal register 0:1 : 0x02 - multiplicant ( input data )
+read internal register 0:2 : 0x00 - summand ( input data )
+read internal register 0:3 : 0x00 - operation overflow bits
+read internal register 1:0 : 0x02 - weight                             <--- 2
+read internal register 1:1 : 0x00 - multiplicant ( input data )
+read internal register 1:2 : 0x00 - summand ( input data )
+read internal register 1:3 : 0x00 - operation overflow bits
+read internal register 2:0 : 0x00 - weight                             <--- 0
+read internal register 2:1 : 0x02 - multiplicant ( input data )
+read internal register 2:2 : 0x00 - summand ( input data )
+read internal register 2:3 : 0x00 - operation overflow bits
+read internal register 3:0 : 0x02 - weight                             <--- 2
+read internal register 3:1 : 0x02 - multiplicant ( input data )
+read internal register 3:2 : 0x00 - summand ( input data )
+read internal register 3:3 : 0x00 - operation overflow bits
+```
+
+Looking at the results sent over the wire, we read the correctly expected `{0,4,0,4}`.
+
+![probe](identity_2_2_it_works.png)
