@@ -45,9 +45,9 @@ def enable_essen():
 		return
 
 	tt.shuttle.tt_um_essen.enable()
-	if tt.mode != RPMode.ASIC_RP_CONTROL:
-		print("Setting mode to ASIC_RP_CONTROL")
-		tt.mode = RPMode.ASIC_RP_CONTROL
+	if tt.mode != RPMode.ASIC_MANUAL_INPUTS:
+		print("Setting mode to ASIC_MANUAL_INPUTS")
+		tt.mode = RPMode.ASIC_MANUAL_INPUTS
 
 	tt.reset_project(True)
  

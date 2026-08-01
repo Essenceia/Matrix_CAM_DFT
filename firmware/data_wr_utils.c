@@ -35,10 +35,7 @@ void send_data(data_t *data, bool is_weight,  pinout_t *p, size_t pl, uint dma_c
 	hard_assert(data);
 	data_to_pinout(data, is_weight, p, pl); 
 
-	//dma_channel_wait_for_finish_blocking(dma_chan); // wait for dma channel to be empty, else will overwrite
 	start_wr_dma_pinout_stream(p, NN, dma_chan, pio, sm);
-	/*dma_channel_wait_for_finish_blocking(dma_chan);
-	while(pio_sm_get_tx_fifo_level(pio, sm)!=0){}*/
 }
 
 
@@ -54,6 +51,7 @@ uint init_wr_dma_channel(PIO pio, uint sm)
 	channel_config_set_read_increment(&c, true); // incremnet the addr we read to on each transfer
 	channel_config_set_write_increment(&c, false); // allways write to TX FIFO of the same PIO	
 	channel_config_set_dreq(&c, pio_get_dreq(pio, sm, true)); // trigger dreq when there is an empty entry in the TX FIFO
+	channel_config_set_transfer_data_size(&c, DMA_SIZE_32);
 	dma_channel_set_write_addr(dma_chan, &pio->txf[sm], false);
 	dma_channel_set_config(dma_chan, &c, false);
 	return dma_chan; 
