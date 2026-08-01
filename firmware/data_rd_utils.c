@@ -2,6 +2,8 @@
 #include "hardware/dma.h"
 #include <string.h> 
 
+//#define DMA_BLOCKING 
+
 /* init dma for hash reads from the RX FIFO to memory 
  * writes using 32b bursts ( size of the PIO RX FIFO )
  */
@@ -24,7 +26,10 @@ void setup_rd_dma_res_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl
 	hard_assert(tc <= bl*PIO_FIFO_W);
 	hard_assert(tc);
 	hard_assert(buffer);
+
+	#ifdef DMA_BLOCKING
 	hard_assert(!dma_channel_is_busy(dma_chan));
+	#endif 
 
 	// clear hash, helps with debug
 	memset(buffer, 0, bl);
@@ -36,7 +41,10 @@ void setup_rd_dma_res_stream(uint dma_chan, size_t l, uint8_t* buffer, size_t bl
 }
 
 void read_res(uint8_t* res, size_t l, uint8_t *buffer, size_t bl, uint dma_chan){
+	#ifdef DMA_BLOCKING
 	dma_channel_wait_for_finish_blocking(dma_chan);
+	#endif 
+
 	// assume no empty cycle 
 	hard_assert(l <= bl);
 	memset(res, 0, l);

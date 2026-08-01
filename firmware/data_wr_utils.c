@@ -17,10 +17,10 @@ void send_data_rst(pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm){
 }
 
 
-void data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl)
+size_t data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl)
 {
 	hard_assert(p);
-	hard_assert(pl*NN >= sizeof(*c));
+	hard_assert(pl >= NN);
 	memset(p, 0, sizeof(pinout_t)*NN);
 	for(uint i=0; i < NN; i++)
 	{
@@ -28,14 +28,15 @@ void data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl)
 		p[i].valid_i = 1; 
 		p[i].data_mode_i = is_weight? CTRL_DATA_MODE_WEIGHT: CTRL_DATA_MODE_DATA;
 	}
+	return NN; 
 }
 
 void send_data(data_t *data, bool is_weight,  pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm)
 {
 	hard_assert(data);
-	data_to_pinout(data, is_weight, p, pl); 
+	size_t tcnt = data_to_pinout(data, is_weight, p, pl); 
 
-	start_wr_dma_pinout_stream(p, NN, dma_chan, pio, sm);
+	start_wr_dma_pinout_stream(p, tcnt, dma_chan, pio, sm);
 }
 
 

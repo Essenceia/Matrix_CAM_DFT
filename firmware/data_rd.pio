@@ -8,10 +8,9 @@ rd:
 	push block
 .wrap_target
 loop:
-	set x 15
+	set x 4
 	irq wait 5 [1]
-	;jmp pin rd
-	jmp rd  
+	jmp pin rd
 .wrap
 
 % c-sdk {

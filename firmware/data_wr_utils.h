@@ -18,7 +18,7 @@ void send_data_rst(pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm);
 void send_data(data_t *data, bool is_weight, pinout_t *p, size_t pl, uint dma_chan, PIO pio, uint sm);
 
 // conversion functions
-void data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl);
+size_t data_to_pinout(data_t *c, bool is_weight, pinout_t *p, size_t pl);
 
 // init dma
 uint init_wr_dma_channel(PIO pio, uint sm);

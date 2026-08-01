@@ -10,6 +10,9 @@ flash:
 	mpremote fs cp test.py :/test.py
 	mpremote reset
 
+reset:	
+	mpremote reset
+
 log:
 	mpremote fs cp :/boot.log boot.log
 	mpremote reset
@@ -25,4 +28,4 @@ format:
 clean: 
 	rm -f ./boot.log
 
-.PHONY: venv cp_main log clean picocom format
+.PHONY: venv cp_main log clean picocom format reset

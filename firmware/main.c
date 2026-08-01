@@ -33,9 +33,9 @@
 #define macro_str(x) #x
 
 #define PICO_SYS_CLK_HW              200000000   // 200 MHz
-#define BUS_PIO_CLK_FREQ_HZ  (float)  80000000.0 //  80 MHz
-#define LED_PIO_CLK_FREQ_HZ  (float)  80000000.0 //  80 MHz
-#define DATA_PIO_CLK_FREQ_HZ (float)  80000000.0 //  80 MHz
+#define BUS_PIO_CLK_FREQ_HZ  (float)   6250000.0 //  80 MHz
+#define LED_PIO_CLK_FREQ_HZ  (float)   6250000.0 //  80 MHz
+#define DATA_PIO_CLK_FREQ_HZ (float)   6250000.0 //  80 MHz
 
 #define _DMA_BASE (uint32_t) 0x50000000
 #define TC_OFF   (uint32_t) 0x008
@@ -55,9 +55,9 @@ int main() {
     uint8_t res[NN];
 	data_t *d = (data_t*) malloc(sizeof(data_t));
 	d->data[0] = 0;
-	d->data[1] = 1;
-	d->data[2] = 2;
-	d->data[3] = 3;
+	d->data[1] = 2;
+	d->data[2] = 0;
+	d->data[3] = 2;
 	
 	size_t pl = NN;
 	pinout_t *p = (pinout_t*)malloc(pl * sizeof(pinout_t));
@@ -127,9 +127,10 @@ int main() {
 
 		send_data(d, true, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
 		
-		sleep_ms(DELAY_MS);
-		pio_sm_put_blocking(pio[PIO_LED], sm[PIO_LED], led);
+		//sleep_ms(DELAY_MS);
 		led = led ? 0:1;
+		pio_sm_put_blocking(pio[PIO_LED], sm[PIO_LED], led);
+		
 		setup_rd_dma_res_stream(rd_dma_chan, sizeof(res_buffer), res_buffer, sizeof(res_buffer), pio[PIO_RD], sm[PIO_RD]);
 		send_data(d, false, p, pl, wr_dma_chan, pio[PIO_WR], sm[PIO_WR]);
 		read_res(res, sizeof(res), res_buffer, sizeof(res_buffer), rd_dma_chan);
