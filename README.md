@@ -1,13 +1,18 @@
 # Multiply and accumulate matrix multiplier ASIC with design for test infrastructure
 
+**This ASIC is silicon proven: A0 works** 
+
+![A0](docs/a0.png) 
+
 ASIC design for a 2x2 systolic matrix multiplier on GF180 supporting multiply and accumulate operations on int8 data alongside a design for test infrastructure to help debug both usage and diagnose design issues in silicon.
 
 This MAC accelerator operates at up to 50 MHz and is capable of reaching up to 100 MMAC/s or 200 MIOPS/s.
 
 **Documentation on using this accelerator can be found : [here](docs/info.md)**
 
-![ASIC implementation final render](docs/implem.png)
+**Bringup logs and instructions can be found: [here](bringup/README.md)**
 
+![ASIC implementation final render](docs/implem.png)
 
 # ASIC 
 
@@ -17,7 +22,7 @@ This design features two clock trees, one for the MAC and another for the JTAG T
 
 There are currently no known manufacturability issues.
 
-Current status: **Taped-in**, in fabrication, part of the tiny-tapeout `gf-0p2` shuttle. 
+Current status: **Silicon proven**, taped-out as part of the tiny-tapeout `gf-0p2` shuttle, [bring-up](bringup/README.md) finished and **A0 works**. 
 
 # MAC 
 
