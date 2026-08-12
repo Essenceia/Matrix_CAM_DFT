@@ -58,7 +58,7 @@ Info : Listening on port 4444 for telnet connections
 
 ### Boundary scan topology 
 
-![scan chain](/doc/boundary_scan_chain.jpg) 
+![scan chain](/docs/boundary_scan_chain.jpg) 
 
 You can read from the input pin values using the internal scan chain using the `SAMPLE_PRELOAD` instruction and 
 write to the output pins using and internal logic using the `EXTEST` instruction. 
