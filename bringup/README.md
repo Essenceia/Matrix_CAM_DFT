@@ -10,6 +10,13 @@ Status: **A0 WORKS!**
 
 JTAG TAP just works !? 
 
+Features tested: 
+- [x] `IDCODE` - working
+- [x] `USER_REG` reading internal MAC registers - working
+- [x] `SAMPLE_REPLOAD` reading boudary scan registers, all input pins tested - working
+- [x] `SAMPLE_REPLOAD` reading boudary scan registers, all output pins tested -working 
+
+
 Running jtag test script using openOCD: 
 ```
 openocd -f openocd.cfg
