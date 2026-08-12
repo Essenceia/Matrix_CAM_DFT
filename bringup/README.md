@@ -8,14 +8,14 @@ Status: **A0 WORKS!**
 
 ![workbench](bringup.webp)
 
-JTAG TAP just works !? 
+Status: WORKING! 
 
 Features tested: 
 - [x] `IDCODE` - working
 - [x] `USER_REG` reading internal MAC registers - working
 - [x] `SAMPLE_REPLOAD` reading boudary scan registers, all input pins tested - working
-- [x] `SAMPLE_REPLOAD` reading boudary scan registers, all output pins tested -working 
-
+- [x] `SAMPLE_REPLOAD` reading boudary scan registers, all output pins tested - working
+- [x] `EXTEST` writing boudary scan registers, all output pins tested
 
 Running jtag test script using openOCD: 
 ```
@@ -55,6 +55,13 @@ read internal register 3:3 : 0xc4 - operation overflow bits
 Info : Listening on port 6666 for tcl connections
 Info : Listening on port 4444 for telnet connections
 ```
+
+### Boundary scan topology 
+
+![scan chain](/doc/boundary_scan_chain.jpg) 
+
+You can read from the input pin values using the internal scan chain using the `SAMPLE_PRELOAD` instruction and 
+write to the output pins using and internal logic using the `EXTEST` instruction. 
 
 ## Systolic Array 
 
